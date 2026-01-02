@@ -327,7 +327,7 @@ export default function StrategyPage() {
                         color: (trade.pnlSol ?? 0) >= 0 ? "#00FF41" : "#FF0051",
                       }}
                     >
-                      {trade.pnlSol !== undefined
+                      {trade.pnlSol != null
                         ? `${trade.pnlSol >= 0 ? "+" : ""}${trade.pnlSol.toFixed(4)}`
                         : "-"}
                     </td>
