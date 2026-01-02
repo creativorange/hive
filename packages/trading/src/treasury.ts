@@ -14,16 +14,23 @@ export interface StrategyAllocation {
   realizedPnL: number;
 }
 
+export type StrategyNeedsFundingCallback = (strategyId: string, allocation: StrategyAllocation) => void;
+
 export class TreasuryManager {
   private totalSol: number;
   private allocations: Map<string, StrategyAllocation> = new Map();
   private tradeHistory: Trade[] = [];
   private config: TreasuryConfig;
   private totalRealizedPnL: number = 0;
+  private onStrategyNeedsFunding: StrategyNeedsFundingCallback | null = null;
 
   constructor(config: TreasuryConfig) {
     this.config = config;
     this.totalSol = config.initialSol;
+  }
+
+  setNeedsFundingCallback(callback: StrategyNeedsFundingCallback): void {
+    this.onStrategyNeedsFunding = callback;
   }
 
   allocateToStrategies(strategies: StrategyGenome[]): void {
@@ -89,12 +96,21 @@ export class TreasuryManager {
     if (allocation) {
       allocation.realizedPnL += trade.pnlSol;
       this.unlockFunds(trade.strategyId, trade.amountSol);
-      allocation.allocatedSol += trade.pnlSol;
-      allocation.availableSol += trade.pnlSol;
+      
+      // Add PnL to allocation but ensure we don't go below 0
+      allocation.allocatedSol = Math.max(0, allocation.allocatedSol + trade.pnlSol);
+      allocation.availableSol = Math.max(0, allocation.allocatedSol - allocation.lockedSol);
+
+      // Check if agent is broke (0 available, 0 locked = no funds, no open positions)
+      if (allocation.allocatedSol === 0 && allocation.lockedSol === 0) {
+        if (this.onStrategyNeedsFunding) {
+          this.onStrategyNeedsFunding(trade.strategyId, allocation);
+        }
+      }
     }
 
     this.totalRealizedPnL += trade.pnlSol;
-    this.totalSol += trade.pnlSol;
+    this.totalSol = Math.max(0, this.totalSol + trade.pnlSol);
   }
 
   getTreasury(): Treasury {
@@ -156,6 +172,15 @@ export class TreasuryManager {
 
   addFunds(amount: number): void {
     this.totalSol += amount;
+  }
+
+  fundStrategy(strategyId: string, amount: number): boolean {
+    const allocation = this.allocations.get(strategyId);
+    if (!allocation) return false;
+
+    allocation.allocatedSol += amount;
+    allocation.availableSol = allocation.allocatedSol - allocation.lockedSol;
+    return true;
   }
 
   withdrawFunds(amount: number): boolean {

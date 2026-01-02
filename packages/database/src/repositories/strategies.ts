@@ -90,6 +90,22 @@ export class StrategiesRepository {
     });
   }
 
+  async markNeedsFunding(id: string): Promise<Strategy | undefined> {
+    return this.update(id, { status: "needs_funding" });
+  }
+
+  async reactivate(id: string): Promise<Strategy | undefined> {
+    return this.update(id, { status: "active" });
+  }
+
+  async findNeedsFunding(): Promise<Strategy[]> {
+    return await this.db
+      .select()
+      .from(strategies)
+      .where(eq(strategies.status, "needs_funding"))
+      .orderBy(desc(strategies.updatedAt));
+  }
+
   async markDeadMany(ids: string[]): Promise<void> {
     if (ids.length === 0) return;
     await this.db

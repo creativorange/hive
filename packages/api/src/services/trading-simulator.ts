@@ -99,6 +99,24 @@ export class TradingSimulator {
         reasons: signal.reasons,
       });
     });
+
+    this.tradingEngine.on("strategy:needs_funding", async (event) => {
+      await this.handleStrategyNeedsFunding(event.strategyId);
+    });
+  }
+
+  private async handleStrategyNeedsFunding(strategyId: string): Promise<void> {
+    try {
+      await this.strategiesRepo.update(strategyId, { status: "needs_funding" });
+      console.log(`[Simulator] Strategy ${strategyId} marked as needs_funding`);
+
+      this.wsHandler.broadcast("strategy:needs_funding", {
+        strategyId,
+        timestamp: Date.now(),
+      });
+    } catch (error) {
+      console.error("[Simulator] Failed to mark strategy as needs_funding:", error);
+    }
   }
 
   async initialize(): Promise<void> {

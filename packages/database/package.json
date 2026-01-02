@@ -22,7 +22,8 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "db:reset": "dotenv -e ../../.env -- tsx src/reset.ts"
+    "db:reset": "dotenv -e ../../.env -- tsx src/reset.ts",
+    "db:reset-trades": "dotenv -e ../../.env -- tsx src/reset-trades.ts"
   },
   "dependencies": {
     "@meta/core": "workspace:*",

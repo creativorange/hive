@@ -44,24 +44,39 @@ export default function StrategyPage() {
   const [strategy, setStrategy] = useState<StrategyDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [funding, setFunding] = useState(false);
+  const [fundAmount, setFundAmount] = useState(1);
+
+  const fetchStrategy = async () => {
+    try {
+      const data = await api.strategies.getById(id);
+      setStrategy(data as StrategyDetail);
+    } catch (err) {
+      setError("Failed to load strategy");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    async function fetchStrategy() {
-      try {
-        const data = await api.strategies.getById(id);
-        setStrategy(data as StrategyDetail);
-      } catch (err) {
-        setError("Failed to load strategy");
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    }
-
     if (id) {
       fetchStrategy();
     }
   }, [id]);
+
+  const handleFund = async () => {
+    if (funding || fundAmount <= 0) return;
+    setFunding(true);
+    try {
+      await api.strategies.fund(id, fundAmount);
+      await fetchStrategy();
+    } catch (err) {
+      console.error("Failed to fund strategy:", err);
+    } finally {
+      setFunding(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -125,10 +140,12 @@ export default function StrategyPage() {
                     ? "bg-meta-green text-meta-bg"
                     : strategy.status === "dead"
                     ? "bg-meta-red text-meta-bg"
+                    : strategy.status === "needs_funding"
+                    ? "bg-meta-gold text-meta-bg animate-pulse"
                     : "bg-meta-cyan text-meta-bg"
                 }`}
               >
-                {strategy.status.toUpperCase()}
+                {strategy.status === "needs_funding" ? "NEEDS FUNDING" : strategy.status.toUpperCase()}
               </span>
             </div>
           </div>
@@ -171,6 +188,48 @@ export default function StrategyPage() {
         </div>
       </motion.div>
 
+      {/* Needs Funding Alert */}
+      {strategy.status === "needs_funding" && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="bg-meta-bg-card border-2 border-meta-gold p-6"
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="font-pixel text-lg text-meta-gold mb-2">⚠️ AGENT NEEDS FUNDING</h2>
+              <p className="font-pixel text-[8px] text-meta-green/70">
+                This agent has depleted its wallet. Fund it to reactivate trading.
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  min="0.1"
+                  step="0.1"
+                  value={fundAmount}
+                  onChange={(e) => setFundAmount(parseFloat(e.target.value) || 0)}
+                  className="w-20 bg-meta-bg-light border border-meta-gold/50 text-meta-gold font-pixel text-[10px] px-2 py-1 text-center"
+                />
+                <span className="font-pixel text-[8px] text-meta-gold">SOL</span>
+              </div>
+              <button
+                onClick={handleFund}
+                disabled={funding || fundAmount <= 0}
+                className={`font-pixel text-[10px] px-4 py-2 border-2 transition-all ${
+                  funding
+                    ? "border-meta-gold/50 text-meta-gold/50 cursor-wait"
+                    : "border-meta-gold text-meta-gold hover:bg-meta-gold hover:text-meta-bg"
+                }`}
+              >
+                {funding ? "FUNDING..." : "FUND AGENT"}
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
       {/* Wallet Stats */}
       {strategy.wallet && (
         <motion.div
@@ -179,7 +238,32 @@ export default function StrategyPage() {
           transition={{ delay: 0.05 }}
           className="bg-meta-bg-card border-2 border-meta-gold p-4"
         >
-          <h2 className="font-pixel text-sm text-meta-gold mb-4">AGENT WALLET</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-pixel text-sm text-meta-gold">AGENT WALLET</h2>
+            {strategy.status === "active" && (
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  min="0.1"
+                  step="0.1"
+                  value={fundAmount}
+                  onChange={(e) => setFundAmount(parseFloat(e.target.value) || 0)}
+                  className="w-16 bg-meta-bg-light border border-meta-green/30 text-meta-green font-pixel text-[8px] px-2 py-1 text-center"
+                />
+                <button
+                  onClick={handleFund}
+                  disabled={funding || fundAmount <= 0}
+                  className={`font-pixel text-[8px] px-3 py-1 border transition-all ${
+                    funding
+                      ? "border-meta-green/30 text-meta-green/30 cursor-wait"
+                      : "border-meta-green/50 text-meta-green/70 hover:border-meta-green hover:text-meta-green"
+                  }`}
+                >
+                  {funding ? "..." : "+ ADD"}
+                </button>
+              </div>
+            )}
+          </div>
           <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
             <StatBox
               label="ALLOCATION"

@@ -98,22 +98,34 @@ export class PumpFunClient {
   async getTokenMetrics(address: string): Promise<PumpFunToken | null> {
     const cached = this.recentTokens.get(address);
     if (cached) {
-      // Simulate realistic memecoin volatility: -50% to +150% swings
-      // Weighted toward smaller moves but allows for moonshots and rugs
+      // More realistic price simulation based on volume
+      // Low volume tokens should have smaller, mostly negative moves (most memecoins die)
+      const volumeScore = Math.min(1, cached.volume24h / 10000); // 0-1 based on volume
       const volatility = Math.random();
       let priceMultiplier: number;
-      if (volatility < 0.4) {
-        // 40% chance: small move (-10% to +10%)
-        priceMultiplier = 0.9 + Math.random() * 0.2;
+      
+      // Most memecoins lose value - 70% chance of decline
+      if (volatility < 0.5) {
+        // 50% chance: slight decline (-2% to -8%)
+        priceMultiplier = 0.92 + Math.random() * 0.06;
       } else if (volatility < 0.7) {
-        // 30% chance: medium move (-30% to +50%)
-        priceMultiplier = 0.7 + Math.random() * 0.8;
-      } else if (volatility < 0.9) {
-        // 20% chance: large move (-50% to +100%)
-        priceMultiplier = 0.5 + Math.random() * 1.5;
+        // 20% chance: moderate decline (-8% to -20%)
+        priceMultiplier = 0.80 + Math.random() * 0.12;
+      } else if (volatility < 0.85) {
+        // 15% chance: small gain (+2% to +15%) - requires some volume
+        priceMultiplier = volumeScore > 0.1 ? 1.02 + Math.random() * 0.13 : 0.95 + Math.random() * 0.05;
+      } else if (volatility < 0.95) {
+        // 10% chance: moderate gain (+15% to +40%) - requires decent volume
+        priceMultiplier = volumeScore > 0.3 ? 1.15 + Math.random() * 0.25 : 0.90 + Math.random() * 0.10;
       } else {
-        // 10% chance: moonshot or rug (+100% to +250% or -60% to -80%)
-        priceMultiplier = Math.random() < 0.5 ? 2.0 + Math.random() * 1.5 : 0.2 + Math.random() * 0.2;
+        // 5% chance: big move - moonshot or rug based on volume
+        if (volumeScore > 0.5 && Math.random() < 0.3) {
+          // 1.5% chance of moonshot (+50% to +100%) - only high volume tokens
+          priceMultiplier = 1.5 + Math.random() * 0.5;
+        } else {
+          // 3.5% chance of rug (-40% to -70%)
+          priceMultiplier = 0.30 + Math.random() * 0.30;
+        }
       }
 
       const newPrice = cached.priceUSD * priceMultiplier;
@@ -121,11 +133,15 @@ export class PumpFunClient {
       // Update cached price so movements accumulate over time
       cached.priceUSD = newPrice;
       
+      // Volume also decays over time for most tokens
+      const volumeMultiplier = volatility < 0.7 ? 0.7 + Math.random() * 0.3 : 0.9 + Math.random() * 0.4;
+      cached.volume24h = cached.volume24h * volumeMultiplier;
+      
       return {
         ...cached,
         priceUSD: newPrice,
-        volume24h: cached.volume24h * (0.5 + Math.random() * 1.0),
-        holders: cached.holders + Math.floor(Math.random() * 50),
+        volume24h: cached.volume24h,
+        holders: cached.holders + Math.floor(Math.random() * 10) - 3, // Can lose holders too
       };
     }
     return null;

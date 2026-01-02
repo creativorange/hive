@@ -33,12 +33,18 @@ export const api = {
     getById: (id: string) => fetchApi<Strategy>(`/api/strategies/${id}`),
     getTop: (count: number) => fetchApi<Strategy[]>(`/api/strategies/top/${count}`),
     getGraveyard: () => fetchApi<Strategy[]>("/api/strategies/graveyard"),
+    getNeedsFunding: () => fetchApi<Strategy[]>("/api/strategies/needs-funding"),
     getPopulation: () => fetchApi<PopulationStats>("/api/strategies/population"),
     getWithTrades: () => fetchApi<(Strategy & { 
       trades: Trade[]; 
       stats: TradingStats;
       liveStats: { totalTrades: number; openTrades: number; closedTrades: number; realizedPnL: number };
     })[]>("/api/strategies/with-trades"),
+    fund: (id: string, amount: number) => 
+      fetchApi<{ success: boolean; strategyId: string; fundedAmount: number; newStatus: string }>(
+        `/api/strategies/${id}/fund`,
+        { method: "POST", body: JSON.stringify({ amount }) }
+      ),
   },
 
   trades: {

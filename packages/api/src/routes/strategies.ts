@@ -118,4 +118,64 @@ export const registerStrategiesRoutes: FastifyPluginAsync = async (fastify: Fast
 
     return strategiesWithTrades;
   });
+
+  fastify.get("/strategies/needs-funding", async (request, reply) => {
+    const strategies = await fastify.ctx.strategiesRepo.findNeedsFunding();
+    return strategies;
+  });
+
+  fastify.post<{ Params: { id: string }; Body: { amount: number } }>(
+    "/strategies/:id/fund",
+    async (request, reply) => {
+      const { id } = request.params;
+      const { amount } = request.body;
+
+      if (!amount || amount <= 0) {
+        return reply.status(400).send({ error: "Invalid funding amount" });
+      }
+
+      const strategy = await fastify.ctx.strategiesRepo.findById(id);
+      if (!strategy) {
+        return reply.status(404).send({ error: "Strategy not found" });
+      }
+
+      const treasury = await fastify.ctx.treasuryRepo.get();
+      if (!treasury || treasury.availableToTrade < amount) {
+        return reply.status(400).send({ 
+          error: "Insufficient treasury funds",
+          available: treasury?.availableToTrade ?? 0,
+          requested: amount,
+        });
+      }
+
+      // Fund through the trading engine (updates in-memory allocation)
+      fastify.ctx.tradingEngine.fundStrategy(id, amount);
+
+      // Update treasury in database
+      await fastify.ctx.treasuryRepo.update({
+        totalSol: treasury.totalSol,
+        availableToTrade: treasury.availableToTrade - amount,
+        lockedInPositions: treasury.lockedInPositions,
+        totalPnl: treasury.totalPnl,
+      });
+
+      // Reactivate strategy if it was needs_funding
+      if (strategy.status === "needs_funding") {
+        await fastify.ctx.strategiesRepo.reactivate(id);
+      }
+
+      fastify.ctx.wsHandler.broadcast("strategy:funded", {
+        strategyId: id,
+        amount,
+        timestamp: Date.now(),
+      });
+
+      return {
+        success: true,
+        strategyId: id,
+        fundedAmount: amount,
+        newStatus: "active",
+      };
+    }
+  );
 };

@@ -32,7 +32,7 @@ export interface StrategyPerformance {
   fitnessScore: number;
 }
 
-export type StrategyStatus = "active" | "breeding" | "dead";
+export type StrategyStatus = "active" | "breeding" | "dead" | "needs_funding";
 
 export type StrategyArchetype =
   | "aggressive"

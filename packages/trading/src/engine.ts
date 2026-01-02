@@ -84,6 +84,11 @@ export class TradingEngine extends (EventEmitter as new () => TypedEventEmitter)
     this.monitor.setUpdateCallback((position) => {
       this.emit("position:updated", position);
     });
+
+    this.treasury.setNeedsFundingCallback((strategyId, allocation) => {
+      console.log(`[Engine] Strategy ${strategyId} needs funding (balance: 0 SOL)`);
+      this.emit("strategy:needs_funding", { strategyId, allocation });
+    });
   }
 
   loadStrategies(strategies: StrategyGenome[]): void {
@@ -359,5 +364,13 @@ export class TradingEngine extends (EventEmitter as new () => TypedEventEmitter)
         minLiquidity: this.config.minLiquidity,
       },
     };
+  }
+
+  fundStrategy(strategyId: string, amount: number): boolean {
+    return this.treasury.fundStrategy(strategyId, amount);
+  }
+
+  getStrategyAllocation(strategyId: string) {
+    return this.treasury.getStrategyAllocation(strategyId);
   }
 }

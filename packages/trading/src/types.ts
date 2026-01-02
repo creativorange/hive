@@ -82,12 +82,24 @@ export interface SellEvaluationResult {
   suggestedExitPercent: number;  // 0-1, how much of position to exit
 }
 
+export interface StrategyNeedsFundingEvent {
+  strategyId: string;
+  allocation: {
+    strategyId: string;
+    allocatedSol: number;
+    lockedSol: number;
+    availableSol: number;
+    realizedPnL: number;
+  };
+}
+
 export interface TradingEngineEvents {
   "token:discovered": (token: PumpFunToken) => void;
   "signal:generated": (signal: TradeSignal) => void;
   "trade:opened": (trade: Trade) => void;
   "trade:closed": (trade: Trade) => void;
   "position:updated": (position: Position) => void;
+  "strategy:needs_funding": (event: StrategyNeedsFundingEvent) => void;
   "engine:started": () => void;
   "engine:stopped": () => void;
   "error": (error: Error) => void;
