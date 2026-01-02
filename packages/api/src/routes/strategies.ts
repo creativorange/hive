@@ -17,11 +17,48 @@ export const registerStrategiesRoutes: FastifyPluginAsync = async (fastify: Fast
 
     const trades = await fastify.ctx.tradesRepo.findByStrategy(id);
     const stats = await fastify.ctx.tradesRepo.getStatsByStrategy(id);
+    
+    // Get open positions from trading engine
+    const allPositions = fastify.ctx.tradingEngine.getPositions();
+    const positions = allPositions.filter(p => p.strategyId === id);
+    
+    // Get wallet allocation from trading simulator
+    const treasury = await fastify.ctx.treasuryRepo.get();
+    const activeStrategies = await fastify.ctx.strategiesRepo.countByStatus("active");
+    const totalAvailable = treasury?.totalSol ?? 0;
+    const reserveAmount = totalAvailable * (treasury?.reservePercent ?? 0.1);
+    const tradableSol = totalAvailable - reserveAmount;
+    const walletAllocation = activeStrategies > 0 
+      ? Math.min(tradableSol / activeStrategies, treasury?.maxAllocationPerStrategy ?? 3)
+      : 0;
+    
+    // Calculate wallet stats
+    const openTrades = trades.filter(t => t.status === "open");
+    const closedTrades = trades.filter(t => t.status === "closed");
+    const lockedInPositions = openTrades.reduce((sum, t) => sum + (t.amountSol ?? 0), 0);
+    const realizedPnL = closedTrades.reduce((sum, t) => sum + (t.pnlSol ?? 0), 0);
+    const unrealizedPnL = positions.reduce((sum, p) => sum + (p.unrealizedPnL ?? 0), 0);
+    
+    // Sort closed trades by PnL descending for top performers
+    const topTrades = [...closedTrades]
+      .sort((a, b) => (b.pnlSol ?? 0) - (a.pnlSol ?? 0))
+      .slice(0, 20);
 
     return {
       ...strategy,
       trades,
+      topTrades,
+      openTrades,
+      positions,
       stats,
+      wallet: {
+        allocation: walletAllocation,
+        locked: lockedInPositions,
+        available: walletAllocation - lockedInPositions,
+        realizedPnL,
+        unrealizedPnL,
+        totalPnL: realizedPnL + unrealizedPnL,
+      },
     };
   });
 

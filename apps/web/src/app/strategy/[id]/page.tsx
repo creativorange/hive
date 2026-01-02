@@ -11,12 +11,25 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import type { Strategy, Trade } from "@/lib/types";
+import type { Strategy, Trade, Position } from "@/lib/types";
 import { api } from "@/lib/api";
 import { ARCHETYPE_COLORS } from "@/lib/sprites";
 
+interface WalletInfo {
+  allocation: number;
+  locked: number;
+  available: number;
+  realizedPnL: number;
+  unrealizedPnL: number;
+  totalPnL: number;
+}
+
 interface StrategyDetail extends Strategy {
   trades?: Trade[];
+  topTrades?: Trade[];
+  openTrades?: Trade[];
+  positions?: Position[];
+  wallet?: WalletInfo;
   stats?: {
     totalTrades: number;
     winRate: number;
@@ -158,6 +171,122 @@ export default function StrategyPage() {
         </div>
       </motion.div>
 
+      {/* Wallet Stats */}
+      {strategy.wallet && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="bg-meta-bg-card border-2 border-meta-gold p-4"
+        >
+          <h2 className="font-pixel text-sm text-meta-gold mb-4">AGENT WALLET</h2>
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+            <StatBox
+              label="ALLOCATION"
+              value={`${strategy.wallet.allocation.toFixed(2)} SOL`}
+              color="gold"
+            />
+            <StatBox
+              label="LOCKED"
+              value={`${strategy.wallet.locked.toFixed(4)} SOL`}
+              color="cyan"
+            />
+            <StatBox
+              label="AVAILABLE"
+              value={`${strategy.wallet.available.toFixed(4)} SOL`}
+              color="green"
+            />
+            <StatBox
+              label="REALIZED PNL"
+              value={`${strategy.wallet.realizedPnL >= 0 ? "+" : ""}${strategy.wallet.realizedPnL.toFixed(4)} SOL`}
+              color={strategy.wallet.realizedPnL >= 0 ? "green" : "red"}
+            />
+            <StatBox
+              label="UNREALIZED PNL"
+              value={`${strategy.wallet.unrealizedPnL >= 0 ? "+" : ""}${strategy.wallet.unrealizedPnL.toFixed(4)} SOL`}
+              color={strategy.wallet.unrealizedPnL >= 0 ? "green" : "red"}
+            />
+            <StatBox
+              label="TOTAL PNL"
+              value={`${strategy.wallet.totalPnL >= 0 ? "+" : ""}${strategy.wallet.totalPnL.toFixed(4)} SOL`}
+              color={strategy.wallet.totalPnL >= 0 ? "green" : "red"}
+            />
+          </div>
+        </motion.div>
+      )}
+
+      {/* Open Positions */}
+      {strategy.positions && strategy.positions.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="bg-meta-bg-card border-2 border-meta-cyan p-4"
+        >
+          <h2 className="font-pixel text-sm text-meta-cyan mb-4">
+            OPEN POSITIONS ({strategy.positions.length})
+          </h2>
+          <div className="overflow-x-auto">
+            <table className="w-full text-[6px]">
+              <thead>
+                <tr className="text-meta-green/50 text-left">
+                  <th className="p-2">TOKEN</th>
+                  <th className="p-2">ENTRY PRICE</th>
+                  <th className="p-2">CURRENT PRICE</th>
+                  <th className="p-2">INVESTED</th>
+                  <th className="p-2">UNREALIZED PNL</th>
+                  <th className="p-2">HOLD TIME</th>
+                </tr>
+              </thead>
+              <tbody>
+                {strategy.positions.map((position) => {
+                  const holdTimeMs = Date.now() - position.openedAt;
+                  const holdMins = Math.floor(holdTimeMs / 60000);
+                  const pnlColor = position.unrealizedPnL >= 0 ? "#00FF41" : "#FF0051";
+                  const tokenSymbol = position.tokenSymbol ?? position.token?.symbol ?? "???";
+                  const tokenAddress = position.tokenAddress ?? position.token?.address ?? "";
+                  
+                  return (
+                    <tr key={position.id} className="border-t border-meta-cyan/20">
+                      <td className="p-2">
+                        <a
+                          href={`https://pump.fun/${tokenAddress}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-meta-cyan hover:text-meta-green hover:underline"
+                        >
+                          {tokenSymbol}
+                        </a>
+                      </td>
+                      <td className="p-2 text-meta-green/70">
+                        ${position.entryPrice.toFixed(8)}
+                      </td>
+                      <td className="p-2 text-meta-green/70">
+                        ${position.currentPrice.toFixed(8)}
+                      </td>
+                      <td className="p-2 text-meta-green">
+                        {position.amountSol.toFixed(4)} SOL
+                      </td>
+                      <td className="p-2" style={{ color: pnlColor }}>
+                        {position.unrealizedPnL >= 0 ? "+" : ""}
+                        {position.unrealizedPnL.toFixed(4)} SOL
+                        <span className="text-[5px] ml-1">
+                          ({position.unrealizedPnLPercent >= 0 ? "+" : ""}
+                          {(position.unrealizedPnLPercent * 100).toFixed(1)}%)
+                        </span>
+                      </td>
+                      <td className="p-2 text-meta-green/50">
+                        {holdMins}min
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </motion.div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
@@ -283,7 +412,7 @@ export default function StrategyPage() {
         </motion.div>
       </div>
 
-      {strategy.trades && strategy.trades.length > 0 && (
+      {strategy.topTrades && strategy.topTrades.length > 0 && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -291,27 +420,41 @@ export default function StrategyPage() {
           className="bg-meta-bg-card border-2 border-meta-green p-4"
         >
           <h2 className="font-pixel text-sm text-meta-cyan mb-4">
-            TRADE HISTORY
+            TOP 20 MOST PROFITABLE TRADES
           </h2>
           <div className="overflow-x-auto">
             <table className="w-full text-[6px]">
               <thead>
                 <tr className="text-meta-green/50 text-left">
+                  <th className="p-2">#</th>
                   <th className="p-2">TOKEN</th>
                   <th className="p-2">ENTRY</th>
                   <th className="p-2">EXIT</th>
-                  <th className="p-2">AMOUNT</th>
+                  <th className="p-2">BOUGHT</th>
+                  <th className="p-2">SOLD</th>
                   <th className="p-2">PNL</th>
                   <th className="p-2">REASON</th>
                 </tr>
               </thead>
               <tbody>
-                {strategy.trades.slice(0, 20).map((trade) => (
+                {strategy.topTrades.map((trade, index) => (
                   <tr
                     key={trade.id}
                     className="border-t border-meta-green/20"
                   >
-                    <td className="p-2 text-meta-green">{trade.tokenSymbol}</td>
+                    <td className="p-2 text-meta-gold font-bold">
+                      {index + 1}
+                    </td>
+                    <td className="p-2">
+                      <a
+                        href={`https://pump.fun/${trade.tokenAddress}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-meta-green hover:text-meta-cyan hover:underline"
+                      >
+                        {trade.tokenSymbol}
+                      </a>
+                    </td>
                     <td className="p-2 text-meta-green/70">
                       ${(trade.entryPrice ?? 0).toFixed(8)}
                     </td>
@@ -320,6 +463,11 @@ export default function StrategyPage() {
                     </td>
                     <td className="p-2 text-meta-green/70">
                       {(trade.amountSol ?? 0).toFixed(4)} SOL
+                    </td>
+                    <td className="p-2 text-meta-green/70">
+                      {trade.status === "closed"
+                        ? `${((trade.amountSol ?? 0) + (trade.pnlSol ?? 0)).toFixed(4)} SOL`
+                        : "-"}
                     </td>
                     <td
                       className="p-2"
