@@ -1,0 +1,19 @@
+{
+  "name": "@meta/tests",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "vitest run --config vitest.config.ts"
+  },
+  "devDependencies": {
+    "@meta/core": "workspace:*",
+    "@meta/trading": "workspace:*",
+    "@meta/database": "workspace:*",
+    "@meta/api": "workspace:*",
+    "vitest": "^2.1.0",
+    "typescript": "^5.7.2"
+  }
+}

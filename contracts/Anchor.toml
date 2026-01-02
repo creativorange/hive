@@ -1,0 +1,25 @@
+[features]
+seeds = false
+skip-lint = false
+
+[programs.localnet]
+meta_treasury = "MetaTreasury11111111111111111111111111111111"
+meta_nft = "MetaNft111111111111111111111111111111111111"
+
+[programs.devnet]
+meta_treasury = "MetaTreasury11111111111111111111111111111111"
+meta_nft = "MetaNft111111111111111111111111111111111111"
+
+[programs.mainnet]
+meta_treasury = "MetaTreasury11111111111111111111111111111111"
+meta_nft = "MetaNft111111111111111111111111111111111111"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "Localnet"
+wallet = "~/.config/solana/id.json"
+
+[scripts]
+test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"

@@ -1,0 +1,104 @@
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --meta-green: #00ff41;
+  --meta-cyan: #00d9ff;
+  --meta-red: #ff0051;
+  --meta-gold: #ffd700;
+  --meta-bg: #0a0a0f;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  background-color: var(--meta-bg);
+  color: var(--meta-green);
+  font-family: "Press Start 2P", cursive;
+  min-height: 100vh;
+}
+
+body {
+  background-image: linear-gradient(
+      to right,
+      rgba(0, 255, 65, 0.03) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgba(0, 255, 65, 0.03) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--meta-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--meta-green);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--meta-cyan);
+}
+
+@layer components {
+  .pixel-border {
+    border: 2px solid var(--meta-green);
+    box-shadow: 4px 4px 0 var(--meta-green);
+  }
+
+  .pixel-border-red {
+    border: 2px solid var(--meta-red);
+    box-shadow: 4px 4px 0 var(--meta-red);
+  }
+
+  .pixel-border-cyan {
+    border: 2px solid var(--meta-cyan);
+    box-shadow: 4px 4px 0 var(--meta-cyan);
+  }
+
+  .pixel-border-gold {
+    border: 2px solid var(--meta-gold);
+    box-shadow: 4px 4px 0 var(--meta-gold);
+  }
+
+  .card {
+    @apply bg-meta-bg-card p-4 pixel-border;
+  }
+
+  .btn-primary {
+    @apply bg-meta-green text-meta-bg px-4 py-2 font-pixel text-xs cursor-pointer
+           hover:bg-meta-cyan transition-colors duration-200
+           active:translate-x-1 active:translate-y-1;
+    box-shadow: 4px 4px 0 #00aa2a;
+  }
+
+  .btn-primary:active {
+    box-shadow: none;
+  }
+
+  .text-glow {
+    text-shadow: 0 0 10px currentColor;
+  }
+
+  .health-bar {
+    @apply h-2 bg-meta-bg-light rounded-sm overflow-hidden;
+  }
+
+  .health-bar-fill {
+    @apply h-full transition-all duration-300;
+  }
+}

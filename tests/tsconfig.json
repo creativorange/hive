@@ -1,0 +1,15 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "./dist",
+    "types": ["vitest/globals"]
+  },
+  "include": ["e2e/**/*"],
+  "references": [
+    { "path": "../packages/core" },
+    { "path": "../packages/trading" },
+    { "path": "../packages/database" },
+    { "path": "../packages/api" }
+  ]
+}

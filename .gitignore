@@ -1,0 +1,111 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+.pnpm-debug.log
+
+# Build outputs
+dist/
+build/
+.next/
+.turbo/
+out/
+*.tsbuildinfo
+
+# Environment files (NEVER commit these)
+.env
+.env.*
+!.env.example
+*.local
+
+# Secrets & Keys
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+*secret*
+*private*
+wallet.json
+keypair.json
+id.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-*
+.project
+.classpath
+.settings/
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Testing
+coverage/
+.nyc_output/
+*.lcov
+.coverage
+
+# Solana/Anchor
+contracts/target/
+contracts/.anchor/
+test-ledger/
+.anchor/
+*.so
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+dump.sql
+*.dump
+
+# Cache
+.cache/
+.parcel-cache/
+.eslintcache
+.stylelintcache
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# Package manager locks (keep one, ignore others if not using)
+# Uncomment if you want to ignore lock files:
+# package-lock.json
+# yarn.lock
+
+# Vercel
+.vercel/
+
+# Railway
+.railway/
+
+# Misc
+*.pid
+*.seed
+*.pid.lock
+.node_repl_history
