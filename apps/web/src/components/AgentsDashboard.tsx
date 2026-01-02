@@ -525,11 +525,11 @@ function TradeRow({ trade }: { trade: Trade }) {
           {trade.tokenSymbol}
         </a>
       </div>
-      <div className="text-right text-meta-green/70">${trade.entryPrice.toFixed(8)}</div>
+      <div className="text-right text-meta-green/70">${(trade.entryPrice ?? 0).toFixed(8)}</div>
       <div className="text-right text-meta-green/70">
         {trade.exitPrice ? `$${trade.exitPrice.toFixed(8)}` : "-"}
       </div>
-      <div className="text-right text-meta-green">{trade.amountSol.toFixed(4)} SOL</div>
+      <div className="text-right text-meta-green">{(trade.amountSol ?? 0).toFixed(4)} SOL</div>
       <div className="text-right" style={{ color: isOpen ? "#888" : pnlColor }}>
         {isOpen ? "-" : `${pnl >= 0 ? "+" : ""}${pnl.toFixed(4)}`}
       </div>

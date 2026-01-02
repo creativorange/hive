@@ -313,13 +313,13 @@ export default function StrategyPage() {
                   >
                     <td className="p-2 text-meta-green">{trade.tokenSymbol}</td>
                     <td className="p-2 text-meta-green/70">
-                      ${trade.entryPrice.toFixed(8)}
+                      ${(trade.entryPrice ?? 0).toFixed(8)}
                     </td>
                     <td className="p-2 text-meta-green/70">
                       {trade.exitPrice ? `$${trade.exitPrice.toFixed(8)}` : "-"}
                     </td>
                     <td className="p-2 text-meta-green/70">
-                      {trade.amountSol.toFixed(4)} SOL
+                      {(trade.amountSol ?? 0).toFixed(4)} SOL
                     </td>
                     <td
                       className="p-2"
