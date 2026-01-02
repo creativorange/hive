@@ -70,7 +70,8 @@ export default function StrategyPage() {
   }
 
   const archetypeColor = ARCHETYPE_COLORS[strategy.archetype ?? "momentum"];
-  const pnlColor = strategy.performance.totalPnL >= 0 ? "#00FF41" : "#FF0051";
+  const totalPnL = strategy.performance?.totalPnL ?? 0;
+  const pnlColor = totalPnL >= 0 ? "#00FF41" : "#FF0051";
 
   const pnlData =
     strategy.trades?.map((trade, i) => ({
@@ -127,8 +128,8 @@ export default function StrategyPage() {
               className="font-pixel text-2xl text-glow"
               style={{ color: pnlColor }}
             >
-              {strategy.performance.totalPnL >= 0 ? "+" : ""}
-              {strategy.performance.totalPnL.toFixed(4)} SOL
+              {totalPnL >= 0 ? "+" : ""}
+              {totalPnL.toFixed(4)} SOL
             </p>
           </div>
         </div>
@@ -136,22 +137,22 @@ export default function StrategyPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <StatBox
             label="FITNESS"
-            value={strategy.performance.fitnessScore.toFixed(1)}
+            value={(strategy.performance?.fitnessScore ?? 0).toFixed(1)}
             color="gold"
           />
           <StatBox
             label="WIN RATE"
-            value={`${(strategy.performance.winRate * 100).toFixed(1)}%`}
+            value={`${((strategy.performance?.winRate ?? 0) * 100).toFixed(1)}%`}
             color="cyan"
           />
           <StatBox
             label="TRADES"
-            value={strategy.performance.tradesExecuted}
+            value={strategy.performance?.tradesExecuted ?? 0}
             color="green"
           />
           <StatBox
             label="SHARPE"
-            value={strategy.performance.sharpeRatio.toFixed(2)}
+            value={(strategy.performance?.sharpeRatio ?? 0).toFixed(2)}
             color="green"
           />
         </div>
@@ -168,35 +169,35 @@ export default function StrategyPage() {
           <div className="grid grid-cols-2 gap-3 text-[7px]">
             <GeneRow
               label="MCAP RANGE"
-              value={`$${strategy.genes.entryMcapMin.toFixed(0)} - $${strategy.genes.entryMcapMax.toFixed(0)}`}
+              value={`$${(strategy.genes.entryMcapMin ?? 0).toFixed(0)} - $${(strategy.genes.entryMcapMax ?? 0).toFixed(0)}`}
             />
             <GeneRow
               label="MIN VOLUME"
-              value={`$${strategy.genes.entryVolumeMin.toFixed(0)}`}
+              value={`$${(strategy.genes.entryVolumeMin ?? 0).toFixed(0)}`}
             />
             <GeneRow
               label="TAKE PROFIT"
-              value={`${strategy.genes.takeProfitMultiplier.toFixed(1)}x`}
+              value={`${(strategy.genes.takeProfitMultiplier ?? 0).toFixed(1)}x`}
             />
             <GeneRow
               label="STOP LOSS"
-              value={`${(strategy.genes.stopLossMultiplier * 100).toFixed(0)}%`}
+              value={`${((strategy.genes.stopLossMultiplier ?? 0) * 100).toFixed(0)}%`}
             />
             <GeneRow
               label="TIME EXIT"
-              value={`${strategy.genes.timeBasedExit}min`}
+              value={`${strategy.genes.timeBasedExit ?? 0}min`}
             />
             <GeneRow
               label="VOLUME DROP"
-              value={`${(strategy.genes.volumeDropExit * 100).toFixed(0)}%`}
+              value={`${((strategy.genes.volumeDropExit ?? 0) * 100).toFixed(0)}%`}
             />
             <GeneRow
               label="INVESTMENT"
-              value={`${(strategy.genes.investmentPercent * 100).toFixed(1)}%`}
+              value={`${((strategy.genes.investmentPercent ?? 0) * 100).toFixed(1)}%`}
             />
             <GeneRow
               label="MAX POSITIONS"
-              value={strategy.genes.maxSimultaneousPositions}
+              value={strategy.genes.maxSimultaneousPositions ?? 0}
             />
           </div>
 
