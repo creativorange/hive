@@ -335,10 +335,10 @@ function AgentRow({
         onClick={onToggle}
         className="md:hidden p-4 hover:bg-roman-bg-light/50 transition-colors cursor-pointer"
       >
-        <div className="flex items-start justify-between gap-2 mb-3">
-          <div className="flex items-center gap-2 min-w-0 flex-1">
+        <div className="mb-3">
+          <div className="flex items-center gap-2 mb-2">
             <span
-              className={`font-sans text-sm transform transition-transform flex-shrink-0 ${
+              className={`font-sans text-sm transform transition-transform ${
                 isExpanded ? "rotate-90" : ""
               }`}
             >
@@ -347,18 +347,18 @@ function AgentRow({
             <Link
               href={`/strategy/${agent.id}`}
               onClick={(e) => e.stopPropagation()}
-              className="font-serif text-base text-roman-text hover:text-roman-stone truncate"
+              className="font-serif text-base text-roman-text hover:text-roman-stone"
             >
               {agent.name || `AGENT-${agent.id.slice(0, 8)}`}
             </Link>
             {agent.status !== "active" && (
-              <span className="font-sans text-xs px-2 py-1 bg-red-100 text-red-800 rounded flex-shrink-0">
+              <span className="font-sans text-xs px-2 py-1 bg-red-100 text-red-800 rounded">
                 {agent.status.toUpperCase()}
               </span>
             )}
           </div>
-          <div className={`font-sans text-sm font-medium flex-shrink-0 ${pnlPositive ? "text-emerald-700" : "text-red-800"}`}>
-            {pnlPositive ? "+" : ""}{realizedPnL.toFixed(2)} SOL
+          <div className={`font-sans text-lg font-medium ${pnlPositive ? "text-emerald-700" : "text-red-800"}`}>
+            {pnlPositive ? "+" : ""}{realizedPnL.toFixed(4)} SOL
           </div>
         </div>
         <div className="grid grid-cols-3 gap-2 text-sm">
