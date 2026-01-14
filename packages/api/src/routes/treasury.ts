@@ -9,13 +9,16 @@ export const registerTreasuryRoutes: FastifyPluginAsync = async (fastify: Fastif
         totalSol: 0,
         lockedInPositions: 0,
         availableToTrade: 0,
-        totalPnl: 0,
+        totalPnL: 0,
         reservePercent: 0.1,
         maxAllocationPerStrategy: 0.5,
       };
     }
 
-    return treasury;
+    return {
+      ...treasury,
+      totalPnL: treasury.totalPnl,
+    };
   });
 
   fastify.get("/treasury/stats", async (request, reply) => {
@@ -24,11 +27,14 @@ export const registerTreasuryRoutes: FastifyPluginAsync = async (fastify: Fastif
     const activeStrategies = await fastify.ctx.strategiesRepo.countByStatus("active");
 
     return {
-      treasury: treasury ?? {
+      treasury: treasury ? {
+        ...treasury,
+        totalPnL: treasury.totalPnl,
+      } : {
         totalSol: 0,
         lockedInPositions: 0,
         availableToTrade: 0,
-        totalPnl: 0,
+        totalPnL: 0,
       },
       trades: tradeStats,
       activeStrategies,
