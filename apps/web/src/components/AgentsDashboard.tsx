@@ -335,8 +335,8 @@ function AgentRow({
         onClick={onToggle}
         className="md:hidden p-4 hover:bg-roman-bg-light/50 transition-colors cursor-pointer"
       >
-        <div className="mb-3">
-          <div className="flex items-center gap-2 mb-2">
+        <div className="flex flex-col gap-2 mb-3">
+          <div className="flex items-center gap-2 flex-wrap">
             <span
               className={`font-sans text-sm transform transition-transform ${
                 isExpanded ? "rotate-90" : ""
@@ -357,8 +357,8 @@ function AgentRow({
               </span>
             )}
           </div>
-          <div className={`font-sans text-lg font-medium ${pnlPositive ? "text-emerald-700" : "text-red-800"}`}>
-            {pnlPositive ? "+" : ""}{realizedPnL.toFixed(4)} SOL
+          <div className={`font-sans text-lg font-bold ${pnlPositive ? "text-emerald-700" : "text-red-800"}`}>
+            PnL: {pnlPositive ? "+" : ""}{realizedPnL.toFixed(4)} SOL
           </div>
         </div>
         <div className="grid grid-cols-3 gap-2 text-sm">
