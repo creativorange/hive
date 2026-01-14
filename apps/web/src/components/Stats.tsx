@@ -10,28 +10,39 @@ interface StatCardProps {
   label: string;
   value: string | number;
   subValue?: string;
-  color?: "green" | "cyan" | "red" | "gold";
+  color?: "positive" | "negative" | "neutral" | "accent";
   animate?: boolean;
 }
 
-function StatCard({ label, value, subValue, color = "green", animate = true }: StatCardProps) {
-  const colorClasses = {
-    green: "text-meta-green border-meta-green",
-    cyan: "text-meta-cyan border-meta-cyan",
-    red: "text-meta-red border-meta-red",
-    gold: "text-meta-gold border-meta-gold",
+function StatCard({ label, value, subValue, color = "neutral", animate = true }: StatCardProps) {
+  const valueColors = {
+    positive: "text-emerald-700",
+    negative: "text-red-800",
+    neutral: "text-roman-text",
+    accent: "text-amber-700",
+  };
+
+  const borderColors = {
+    positive: "border-emerald-600",
+    negative: "border-red-700",
+    neutral: "border-roman-stone",
+    accent: "border-amber-600",
   };
 
   return (
     <motion.div
       initial={animate ? { opacity: 0, y: 20 } : false}
       animate={{ opacity: 1, y: 0 }}
-      className={`bg-meta-bg-card p-4 border-2 ${colorClasses[color]} pixel-border`}
+      className={`roman-tablet p-4 min-h-[100px] border-2 ${borderColors[color]}`}
     >
-      <p className="font-pixel text-[6px] text-meta-green/70 mb-2">{label}</p>
-      <p className={`font-pixel text-lg ${colorClasses[color]} text-glow`}>{value}</p>
+      <p className="font-serif text-sm text-roman-stone mb-2 tracking-wider uppercase">{label}</p>
+      
+      <p className={`font-serif text-2xl md:text-3xl ${valueColors[color]} font-bold`}>
+        {value}
+      </p>
+      
       {subValue && (
-        <p className="font-pixel text-[6px] text-meta-green/50 mt-1">{subValue}</p>
+        <p className="font-sans text-sm text-roman-stone mt-2">{subValue}</p>
       )}
     </motion.div>
   );
@@ -43,7 +54,7 @@ export function Stats() {
   const [evolution, setEvolution] = useState<EvolutionState | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const { subscribe, isConnected } = useWebSocket({ channels: ["treasury", "trades", "evolution"] });
+  const { subscribe } = useWebSocket({ channels: ["treasury", "trades", "evolution"] });
 
   const fetchData = useCallback(async () => {
     try {
@@ -126,73 +137,84 @@ export function Stats() {
         {[...Array(8)].map((_, i) => (
           <div
             key={i}
-            className="bg-meta-bg-card p-4 border-2 border-meta-green/30 animate-pulse h-24"
+            className="roman-tablet p-4 border-2 border-roman-stone/30 animate-pulse min-h-[100px]"
           />
         ))}
       </div>
     );
   }
 
-  const formatSol = (value: number) => `${value.toFixed(4)} SOL`;
-  const formatPercent = (value: number) => `${(value * 100).toFixed(1)}%`;
+  const formatSol = (value: number | null | undefined) => {
+    const num = value ?? 0;
+    return isNaN(num) ? "0.0000 SOL" : `${num.toFixed(4)} SOL`;
+  };
+  const formatPercent = (value: number | null | undefined) => {
+    const num = value ?? 0;
+    return isNaN(num) ? "0.0%" : `${(num * 100).toFixed(1)}%`;
+  };
+  const safeNumber = (value: number | null | undefined, fallback = 0) => {
+    const num = value ?? fallback;
+    return isNaN(num) ? fallback : num;
+  };
 
   return (
-    <div className="space-y-4">
-      <h2 className="font-pixel text-sm text-meta-cyan">LIVE STATS</h2>
+    <div className="space-y-6">
+      <h2 className="font-serif text-2xl text-roman-text tracking-wider">IMPERIAL TREASURY</h2>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard
           label="TREASURY"
           value={formatSol(treasury?.totalSol ?? 0)}
           subValue={`Available: ${formatSol(treasury?.availableToTrade ?? 0)}`}
-          color="gold"
+          color="accent"
         />
 
         <StatCard
           label="TOTAL PNL"
           value={formatSol(treasury?.totalPnl ?? 0)}
-          color={(treasury?.totalPnl ?? 0) >= 0 ? "green" : "red"}
+          color={(treasury?.totalPnl ?? 0) >= 0 ? "positive" : "negative"}
         />
 
         <StatCard
-          label="ACTIVE STRATEGIES"
-          value={evolution?.activeStrategies ?? 0}
-          subValue={`GEN ${evolution?.generation ?? 0}`}
-          color="cyan"
+          label="TOTAL LEGIONS"
+          value={safeNumber(evolution?.activeStrategies)}
+          subValue={`GEN ${safeNumber(evolution?.generation)}`}
+          color="neutral"
         />
 
         <StatCard
           label="OPEN POSITIONS"
-          value={stats?.openPositions ?? 0}
-          subValue={`Locked: ${formatSol(treasury?.lockedInPositions ?? 0)}`}
-          color="green"
+          value={safeNumber(stats?.openPositions)}
+          subValue={`Locked: ${formatSol(treasury?.lockedInPositions)}`}
+          color="neutral"
         />
 
         <StatCard
           label="TOTAL TRADES"
-          value={stats?.totalTrades ?? 0}
-          subValue={`Vol: ${formatSol(stats?.totalVolumeSol ?? 0)}`}
+          value={safeNumber(stats?.totalTrades)}
+          subValue={`Vol: ${formatSol(stats?.totalVolumeSol)}`}
+          color="neutral"
         />
 
         <StatCard
           label="WIN RATE"
-          value={formatPercent(stats?.winRate ?? 0)}
-          subValue={`W: ${stats?.winningTrades ?? 0} / L: ${stats?.losingTrades ?? 0}`}
-          color={(stats?.winRate ?? 0) >= 0.5 ? "green" : "red"}
+          value={formatPercent(stats?.winRate)}
+          subValue={`W: ${safeNumber(stats?.winningTrades)} / L: ${safeNumber(stats?.losingTrades)}`}
+          color={safeNumber(stats?.winRate) >= 0.5 ? "positive" : "negative"}
         />
 
         <StatCard
           label="AVG FITNESS"
-          value={(evolution?.avgFitness ?? 0).toFixed(1)}
-          subValue={`Best: ${(evolution?.bestFitness ?? 0).toFixed(1)}`}
-          color="cyan"
+          value={safeNumber(evolution?.avgFitness).toFixed(1)}
+          subValue={`Best: ${safeNumber(evolution?.bestFitness).toFixed(1)}`}
+          color="neutral"
         />
 
         <StatCard
           label="BEST TRADE"
-          value={formatSol(stats?.bestTrade ?? 0)}
-          subValue={`Worst: ${formatSol(stats?.worstTrade ?? 0)}`}
-          color="gold"
+          value={formatSol(stats?.bestTrade)}
+          subValue={`Worst: ${formatSol(stats?.worstTrade)}`}
+          color="accent"
         />
       </div>
     </div>

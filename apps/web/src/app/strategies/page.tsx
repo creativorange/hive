@@ -56,9 +56,9 @@ export default function StrategiesPage() {
   if (loading) {
     return (
       <div className="space-y-4">
-        <div className="h-10 bg-meta-bg-light animate-pulse" />
+        <div className="h-10 bg-roman-dark animate-pulse" />
         {[...Array(10)].map((_, i) => (
-          <div key={i} className="h-16 bg-meta-bg-light animate-pulse" />
+          <div key={i} className="h-16 bg-roman-dark animate-pulse" />
         ))}
       </div>
     );
@@ -67,25 +67,25 @@ export default function StrategiesPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-pixel text-xl text-meta-cyan text-glow">
-          ALL STRATEGIES
+        <h1 className="font-serif text-xl text-roman-gold text-glow">
+          ALL LEGIONS
         </h1>
-        <span className="font-pixel text-[8px] text-meta-green/50">
+        <span className="font-serif text-[8px] text-roman-marble/50">
           {strategies.length} TOTAL
         </span>
       </div>
 
       <div className="flex flex-wrap gap-4 items-center">
         <div className="flex items-center gap-2">
-          <span className="font-pixel text-[7px] text-meta-green/50">SORT:</span>
+          <span className="font-serif text-[7px] text-roman-marble/50">SORT:</span>
           {(["fitness", "pnl", "winRate", "trades"] as const).map((sort) => (
             <button
               key={sort}
               onClick={() => setSortBy(sort)}
-              className={`font-pixel text-[7px] px-2 py-1 border transition-colors ${
+              className={`font-serif text-[7px] px-2 py-1 border transition-colors ${
                 sortBy === sort
-                  ? "border-meta-cyan text-meta-cyan bg-meta-cyan/10"
-                  : "border-meta-green/30 text-meta-green/50 hover:border-meta-green"
+                  ? "border-roman-gold text-roman-gold bg-roman-gold/10"
+                  : "border-roman-marble/30 text-roman-marble/50 hover:border-roman-marble"
               }`}
             >
               {sort.toUpperCase()}
@@ -94,15 +94,15 @@ export default function StrategiesPage() {
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="font-pixel text-[7px] text-meta-green/50">FILTER:</span>
+          <span className="font-serif text-[7px] text-roman-marble/50">FILTER:</span>
           {archetypes.map((arch) => (
             <button
               key={arch}
               onClick={() => setFilterArchetype(arch as string)}
-              className={`font-pixel text-[7px] px-2 py-1 border transition-colors ${
+              className={`font-serif text-[7px] px-2 py-1 border transition-colors ${
                 filterArchetype === arch
-                  ? "border-meta-cyan text-meta-cyan bg-meta-cyan/10"
-                  : "border-meta-green/30 text-meta-green/50 hover:border-meta-green"
+                  ? "border-roman-gold text-roman-gold bg-roman-gold/10"
+                  : "border-roman-marble/30 text-roman-marble/50 hover:border-roman-marble"
               }`}
               style={{
                 borderColor: arch !== "all" ? ARCHETYPE_COLORS[arch as string] + "80" : undefined,
@@ -115,8 +115,8 @@ export default function StrategiesPage() {
         </div>
       </div>
 
-      <div className="bg-meta-bg-card border-2 border-meta-green">
-        <div className="grid grid-cols-12 gap-2 p-3 border-b border-meta-green/30 font-pixel text-[6px] text-meta-green/50">
+      <div className="bg-roman-dark border-2 border-roman-marble">
+        <div className="grid grid-cols-12 gap-2 p-3 border-b border-roman-marble/30 font-serif text-[6px] text-roman-marble/50">
           <div className="col-span-1">#</div>
           <div className="col-span-3">NAME</div>
           <div className="col-span-2">ARCHETYPE</div>
@@ -131,38 +131,38 @@ export default function StrategiesPage() {
           <Link
             key={strategy.id}
             href={`/strategy/${strategy.id}`}
-            className="grid grid-cols-12 gap-2 p-3 border-b border-meta-green/10 hover:bg-meta-green/5 transition-colors"
+            className="grid grid-cols-12 gap-2 p-3 border-b border-roman-marble/10 hover:bg-roman-marble/5 transition-colors"
           >
-            <div className="col-span-1 font-pixel text-[7px] text-meta-green/50">
+            <div className="col-span-1 font-serif text-[7px] text-roman-marble/50">
               {index + 1}
             </div>
-            <div className="col-span-3 font-pixel text-[7px] text-meta-green truncate">
+            <div className="col-span-3 font-serif text-[7px] text-roman-marble truncate">
               {strategy.name || `STRATEGY-${strategy.id.slice(0, 8)}`}
             </div>
             <div
-              className="col-span-2 font-pixel text-[7px]"
+              className="col-span-2 font-serif text-[7px]"
               style={{ color: ARCHETYPE_COLORS[strategy.archetype ?? "momentum"] }}
             >
               {strategy.archetype?.toUpperCase().replace("_", " ")}
             </div>
-            <div className="col-span-1 font-pixel text-[7px] text-meta-gold text-right">
+            <div className="col-span-1 font-serif text-[7px] text-roman-gold text-right">
               {strategy.performance.fitnessScore.toFixed(1)}
             </div>
             <div
-              className={`col-span-2 font-pixel text-[7px] text-right ${
-                strategy.performance.totalPnL >= 0 ? "text-meta-green" : "text-meta-red"
+              className={`col-span-2 font-serif text-[7px] text-right ${
+                strategy.performance.totalPnL >= 0 ? "text-roman-laurel" : "text-roman-blood"
               }`}
             >
               {strategy.performance.totalPnL >= 0 ? "+" : ""}
               {strategy.performance.totalPnL.toFixed(4)} SOL
             </div>
-            <div className="col-span-1 font-pixel text-[7px] text-meta-cyan text-right">
+            <div className="col-span-1 font-serif text-[7px] text-roman-navy text-right">
               {(strategy.performance.winRate * 100).toFixed(0)}%
             </div>
-            <div className="col-span-1 font-pixel text-[7px] text-meta-green/70 text-right">
+            <div className="col-span-1 font-serif text-[7px] text-roman-marble/70 text-right">
               {strategy.performance.tradesExecuted}
             </div>
-            <div className="col-span-1 font-pixel text-[7px] text-meta-green/50 text-right">
+            <div className="col-span-1 font-serif text-[7px] text-roman-marble/50 text-right">
               {strategy.generation}
             </div>
           </Link>
@@ -170,8 +170,8 @@ export default function StrategiesPage() {
 
         {sortedStrategies.length === 0 && (
           <div className="p-8 text-center">
-            <p className="font-pixel text-[8px] text-meta-green/50">
-              NO STRATEGIES FOUND
+            <p className="font-serif text-[8px] text-roman-marble/50">
+              NO LEGIONS FOUND
             </p>
           </div>
         )}

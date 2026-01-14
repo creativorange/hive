@@ -50,12 +50,12 @@ export function Graveyard() {
 
   if (loading) {
     return (
-      <div className="bg-meta-bg-card border-2 border-meta-red p-4">
+      <div className="bg-roman-bg border-2 border-roman-crimson p-4">
         <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
           {[...Array(16)].map((_, i) => (
             <div
               key={i}
-              className="h-32 bg-meta-bg-light animate-pulse"
+              className="h-32 bg-roman-bg animate-pulse"
             />
           ))}
         </div>
@@ -66,8 +66,8 @@ export function Graveyard() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="font-pixel text-sm text-meta-red">
-          GRAVEYARD ({deadStrategies.length} FALLEN)
+        <h2 className="font-serif text-xl text-roman-crimson">
+          CATACOMBS ({deadStrategies.length} FALLEN)
         </h2>
 
         <div className="flex gap-2">
@@ -78,7 +78,7 @@ export function Graveyard() {
               setSelectedGen(null);
               setSelectedArchetype(null);
             }}
-            className="font-pixel text-[6px] bg-meta-bg-card border border-meta-green/30 text-meta-green px-2 py-1"
+            className="font-serif text-sm bg-roman-bg border border-roman-text/30 text-roman-text px-2 py-1"
           >
             <option value="all">ALL</option>
             <option value="generation">BY GEN</option>
@@ -89,7 +89,7 @@ export function Graveyard() {
             <select
               value={selectedGen ?? ""}
               onChange={(e) => setSelectedGen(Number(e.target.value))}
-              className="font-pixel text-[6px] bg-meta-bg-card border border-meta-green/30 text-meta-green px-2 py-1"
+              className="font-serif text-sm bg-roman-bg border border-roman-text/30 text-roman-text px-2 py-1"
             >
               <option value="">SELECT GEN</option>
               {generations.map((gen) => (
@@ -104,7 +104,7 @@ export function Graveyard() {
             <select
               value={selectedArchetype ?? ""}
               onChange={(e) => setSelectedArchetype(e.target.value)}
-              className="font-pixel text-[6px] bg-meta-bg-card border border-meta-green/30 text-meta-green px-2 py-1"
+              className="font-serif text-sm bg-roman-bg border border-roman-text/30 text-roman-text px-2 py-1"
             >
               <option value="">SELECT TYPE</option>
               {archetypes.map((type) => (
@@ -117,10 +117,10 @@ export function Graveyard() {
         </div>
       </div>
 
-      <div className="bg-meta-bg-card border-2 border-meta-red/50 p-4">
+      <div className="bg-roman-bg border-2 border-roman-crimson/50 p-4">
         {filteredStrategies.length === 0 ? (
-          <p className="font-pixel text-[8px] text-meta-red/50 text-center py-8">
-            NO FALLEN STRATEGIES
+          <p className="font-serif text-sm text-roman-crimson/70 text-center py-8">
+            NO FALLEN LEGIONS
           </p>
         ) : (
           <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
@@ -164,7 +164,7 @@ function Gravestone({ strategy, index }: GravestoneProps) {
       onMouseEnter={() => setShowDetails(true)}
       onMouseLeave={() => setShowDetails(false)}
     >
-      <div className="bg-meta-bg-light border border-meta-red/30 p-2 flex flex-col items-center cursor-pointer hover:border-meta-red transition-colors">
+      <div className="bg-roman-bg border border-roman-crimson/30 p-2 flex flex-col items-center cursor-pointer hover:border-roman-crimson transition-colors">
         <div className="relative mb-2">
           <canvas
             ref={canvasRef}
@@ -173,15 +173,15 @@ function Gravestone({ strategy, index }: GravestoneProps) {
             className="pixelated opacity-50"
           />
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className="font-pixel text-[10px] text-meta-red">†</span>
+            <span className="font-serif text-lg text-roman-crimson font-bold">†</span>
           </div>
         </div>
 
-        <p className="font-pixel text-[5px] text-meta-green/50 text-center truncate w-full">
+        <p className="font-serif text-xs text-roman-text text-center truncate w-full">
           {strategy.name?.slice(0, 8) || strategy.id.slice(0, 6)}
         </p>
 
-        <p className="font-pixel text-[4px] text-meta-red/50">
+        <p className="font-serif text-xs text-roman-crimson/70">
           GEN {strategy.generation}
         </p>
       </div>
@@ -190,14 +190,14 @@ function Gravestone({ strategy, index }: GravestoneProps) {
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-meta-bg-card border border-meta-red p-2 z-20 min-w-36"
+          className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-roman-bg-card border border-roman-crimson p-3 z-20 min-w-44 shadow-lg"
         >
-          <p className="font-pixel text-[6px] text-meta-red mb-1">
+          <p className="font-serif text-sm text-roman-crimson mb-2">
             {strategy.name || `STRATEGY-${strategy.id.slice(0, 8)}`}
           </p>
 
-          <div className="space-y-1 text-[5px]">
-            <p className="text-meta-green/50">
+          <div className="space-y-1 text-xs font-serif">
+            <p className="text-roman-text">
               ARCHETYPE:{" "}
               <span
                 style={{
@@ -207,34 +207,34 @@ function Gravestone({ strategy, index }: GravestoneProps) {
                 {strategy.archetype?.toUpperCase()}
               </span>
             </p>
-            <p className="text-meta-green/50">
+            <p className="text-roman-text">
               FINAL PNL:{" "}
               <span
                 className={
                   strategy.performance.totalPnL >= 0
-                    ? "text-meta-green"
-                    : "text-meta-red"
+                    ? "text-roman-gold"
+                    : "text-roman-crimson"
                 }
               >
                 {strategy.performance.totalPnL.toFixed(4)} SOL
               </span>
             </p>
-            <p className="text-meta-green/50">
+            <p className="text-roman-text">
               WIN RATE:{" "}
-              <span className="text-meta-cyan">
+              <span className="text-roman-purple-light">
                 {(strategy.performance.winRate * 100).toFixed(1)}%
               </span>
             </p>
-            <p className="text-meta-green/50">
+            <p className="text-roman-text">
               TRADES: {strategy.performance.tradesExecuted}
             </p>
-            <p className="text-meta-green/50">
+            <p className="text-roman-text">
               FINAL FITNESS: {strategy.performance.fitnessScore.toFixed(1)}
             </p>
-            <p className="text-meta-red/70">DIED: {deathDate}</p>
+            <p className="text-roman-crimson">DIED: {deathDate}</p>
           </div>
 
-          <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-meta-red" />
+          <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-roman-crimson" />
         </motion.div>
       )}
     </motion.div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Strategy, EvolutionCycle } from "@/lib/types";
 import { api } from "@/lib/api";
@@ -17,7 +18,6 @@ export function BreedingLab() {
   const [newborn, setNewborn] = useState<Strategy[]>([]);
   const [lastCycle, setLastCycle] = useState<EvolutionCycle | null>(null);
   const [loading, setLoading] = useState(true);
-  const [triggering, setTriggering] = useState(false);
 
   const { subscribe } = useWebSocket({ channels: ["evolution"] });
 
@@ -79,23 +79,10 @@ export function BreedingLab() {
     setStrategies(populationData.strategies);
   }, [strategies]);
 
-  const triggerEvolution = async () => {
-    if (triggering) return;
-
-    setTriggering(true);
-    try {
-      await api.evolution.triggerCycle();
-    } catch (error) {
-      console.error("Failed to trigger evolution:", error);
-    } finally {
-      setTriggering(false);
-    }
-  };
-
   if (loading) {
     return (
-      <div className="bg-meta-bg-card border-2 border-meta-cyan p-4">
-        <div className="h-80 bg-meta-bg-light animate-pulse" />
+      <div className="bg-roman-bg-card border-2 border-roman-purple-light p-4">
+        <div className="h-80 bg-roman-bg-light animate-pulse" />
       </div>
     );
   }
@@ -103,21 +90,10 @@ export function BreedingLab() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="font-pixel text-sm text-meta-cyan">BREEDING LAB</h2>
-        <button
-          onClick={triggerEvolution}
-          disabled={triggering || phase !== "idle"}
-          className={`font-pixel text-[8px] px-4 py-2 border-2 transition-all ${
-            triggering || phase !== "idle"
-              ? "border-meta-green/30 text-meta-green/30 cursor-not-allowed"
-              : "border-meta-gold text-meta-gold hover:bg-meta-gold hover:text-meta-bg"
-          }`}
-        >
-          {triggering ? "EVOLVING..." : "TRIGGER EVOLUTION"}
-        </button>
+        <h2 className="font-serif text-2xl text-roman-text">THE SENATE</h2>
       </div>
 
-      <div className="bg-meta-bg-card border-2 border-meta-cyan/50 p-6 min-h-80">
+      <div className="bg-roman-bg-card border-2 border-roman-purple-light/50 p-6 min-h-80">
         {phase === "idle" ? (
           <IdleState strategies={strategies} lastCycle={lastCycle} />
         ) : (
@@ -151,21 +127,21 @@ function IdleState({
   return (
     <div className="space-y-4">
       <div className="text-center mb-6">
-        <p className="font-pixel text-[8px] text-meta-green/50">
-          NEXT EVOLUTION PREVIEW
+        <p className="font-serif text-lg text-roman-text">
+          SUCCESSION FORECAST
         </p>
         {lastCycle && (
-          <p className="font-pixel text-[6px] text-meta-green/30 mt-1">
-            LAST CYCLE: GEN {lastCycle.generation} |{" "}
+          <p className="font-serif text-sm text-roman-stone mt-1">
+            LAST DECREE: GEN {lastCycle.generation} |{" "}
             {new Date(lastCycle.cycleTimestamp).toLocaleString()}
           </p>
         )}
       </div>
 
       <div className="grid grid-cols-3 gap-4">
-        <div className="border border-meta-green/30 p-3">
-          <p className="font-pixel text-[7px] text-meta-green mb-2">
-            SURVIVORS (TOP 20%)
+        <div className="border border-roman-stone/30 p-3">
+          <p className="font-serif text-xl text-roman-text mb-2">
+            PATRICIANS (TOP 20%)
           </p>
           <div className="space-y-1">
             {sortedByFitness.slice(0, survivorCount).map((s) => (
@@ -174,9 +150,9 @@ function IdleState({
           </div>
         </div>
 
-        <div className="border border-meta-cyan/30 p-3">
-          <p className="font-pixel text-[7px] text-meta-cyan mb-2">
-            MUTATORS (60%)
+        <div className="border border-roman-stone/30 p-3">
+          <p className="font-serif text-xl text-roman-text mb-2">
+            PLEBEIANS (60%)
           </p>
           <div className="space-y-1 max-h-48 overflow-y-auto">
             {sortedByFitness
@@ -186,16 +162,16 @@ function IdleState({
                 <StrategyChip key={s.id} strategy={s} highlight="cyan" />
               ))}
             {strategies.length > survivorCount + deadCount + 10 && (
-              <p className="font-pixel text-[5px] text-meta-cyan/50">
+              <p className="font-serif text-sm text-roman-stone">
                 +{strategies.length - survivorCount - deadCount - 10} more
               </p>
             )}
           </div>
         </div>
 
-        <div className="border border-meta-red/30 p-3">
-          <p className="font-pixel text-[7px] text-meta-red mb-2">
-            DEATH ROW (BOTTOM 20%)
+        <div className="border border-roman-stone/30 p-3">
+          <p className="font-serif text-xl text-roman-text mb-2">
+            EXILED (BOTTOM 20%)
           </p>
           <div className="space-y-1">
             {sortedByFitness.slice(-deadCount).map((s) => (
@@ -235,26 +211,26 @@ function EvolutionAnimation({
               animate={{ scale: [1, 1.1, 1] }}
               transition={{ repeat: Infinity, duration: 1 }}
             >
-              <p className="font-pixel text-lg text-meta-gold text-glow">
-                SELECTION PHASE
+              <p className="font-serif text-3xl text-roman-text text-glow">
+                JUDGMENT PHASE
               </p>
             </motion.div>
-            <p className="font-pixel text-[8px] text-meta-green/50 mt-4">
-              Evaluating fitness scores...
+            <p className="font-serif text-lg text-roman-stone mt-4">
+              Evaluating worthiness...
             </p>
 
             <div className="flex gap-8 mt-6">
               <div className="text-center">
-                <p className="font-pixel text-sm text-meta-green">
+                <p className="font-serif text-xl text-roman-text">
                   {survivors.length}
                 </p>
-                <p className="font-pixel text-[6px] text-meta-green/50">
-                  SURVIVORS
+                <p className="font-serif text-sm text-roman-stone">
+                  PATRICIANS
                 </p>
               </div>
               <div className="text-center">
-                <p className="font-pixel text-sm text-meta-red">{dead.length}</p>
-                <p className="font-pixel text-[6px] text-meta-red/50">DYING</p>
+                <p className="font-serif text-xl text-roman-crimson">{dead.length}</p>
+                <p className="font-serif text-sm text-roman-stone">EXILED</p>
               </div>
             </div>
           </motion.div>
@@ -269,11 +245,11 @@ function EvolutionAnimation({
             className="absolute inset-0 flex flex-col items-center justify-center"
           >
             <DNAHelix />
-            <p className="font-pixel text-lg text-meta-cyan text-glow mt-4">
-              BREEDING PHASE
+            <p className="font-serif text-3xl text-roman-text text-glow mt-4">
+              LINEAGE PHASE
             </p>
-            <p className="font-pixel text-[8px] text-meta-green/50 mt-2">
-              Crossing genetic material...
+            <p className="font-serif text-lg text-roman-stone mt-2">
+              Forging new bloodlines...
             </p>
           </motion.div>
         )}
@@ -296,11 +272,11 @@ function EvolutionAnimation({
             >
               🧬
             </motion.div>
-            <p className="font-pixel text-lg text-meta-gold text-glow mt-4">
-              MUTATION PHASE
+            <p className="font-serif text-3xl text-roman-text text-glow mt-4">
+              TRANSFORMATION PHASE
             </p>
-            <p className="font-pixel text-[8px] text-meta-green/50 mt-2">
-              Applying random mutations...
+            <p className="font-serif text-lg text-roman-stone mt-2">
+              Divine intervention...
             </p>
           </motion.div>
         )}
@@ -317,12 +293,12 @@ function EvolutionAnimation({
               animate={{ scale: [1, 1.2, 1] }}
               transition={{ repeat: 3, duration: 0.5 }}
             >
-              <p className="font-pixel text-2xl text-meta-green text-glow">
-                EVOLUTION COMPLETE
+              <p className="font-serif text-3xl text-roman-text text-glow">
+                SUCCESSION COMPLETE
               </p>
             </motion.div>
-            <p className="font-pixel text-[8px] text-meta-cyan mt-4">
-              New generation ready
+            <p className="font-serif text-lg text-roman-stone mt-4">
+              New dynasty rises
             </p>
           </motion.div>
         )}
@@ -348,9 +324,9 @@ function DNAHelix() {
             delay: i * 0.1,
           }}
         >
-          <div className="w-3 h-3 rounded-full bg-meta-cyan" />
-          <div className="flex-1 h-0.5 bg-meta-green/30 self-center mx-1" />
-          <div className="w-3 h-3 rounded-full bg-meta-gold" />
+          <div className="w-3 h-3 rounded-full bg-roman-text" />
+          <div className="flex-1 h-0.5 bg-roman-stone/50 self-center mx-1" />
+          <div className="w-3 h-3 rounded-full bg-roman-stone" />
         </motion.div>
       ))}
     </div>
@@ -365,25 +341,26 @@ function StrategyChip({
   highlight: "green" | "cyan" | "red";
 }) {
   const borderColor = {
-    green: "border-meta-green/50",
-    cyan: "border-meta-cyan/50",
-    red: "border-meta-red/50",
+    green: "border-roman-gold/50",
+    cyan: "border-roman-purple-light/50",
+    red: "border-roman-crimson/50",
   }[highlight];
 
   return (
-    <div
-      className={`flex items-center justify-between p-1 border ${borderColor} bg-meta-bg-light`}
+    <Link
+      href={`/strategy/${strategy.id}`}
+      className={`flex items-center justify-between p-2 border ${borderColor} bg-roman-bg-light hover:bg-roman-bg-card transition-colors`}
     >
-      <span className="font-pixel text-[5px] text-meta-green truncate flex-1">
+      <span className="font-serif text-base text-roman-text truncate flex-1">
         {strategy.name?.slice(0, 10) || strategy.id.slice(0, 8)}
       </span>
       <span
-        className="font-pixel text-[5px] ml-2"
+        className="font-serif text-base ml-2 font-semibold"
         style={{ color: ARCHETYPE_COLORS[strategy.archetype ?? "momentum"] }}
       >
         {strategy.performance.fitnessScore.toFixed(0)}
       </span>
-    </div>
+    </Link>
   );
 }
 

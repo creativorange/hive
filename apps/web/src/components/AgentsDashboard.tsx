@@ -176,9 +176,9 @@ export function AgentsDashboard() {
   if (loading) {
     return (
       <div className="space-y-4">
-        <div className="h-24 bg-meta-bg-card animate-pulse" />
+        <div className="h-24 bg-roman-bg-light animate-pulse rounded" />
         {[...Array(10)].map((_, i) => (
-          <div key={i} className="h-16 bg-meta-bg-card animate-pulse" />
+          <div key={i} className="h-16 bg-roman-bg-light animate-pulse rounded" />
         ))}
       </div>
     );
@@ -190,24 +190,24 @@ export function AgentsDashboard() {
         <SummaryCard
           label="TOTAL PNL"
           value={`${totalPnL >= 0 ? "+" : ""}${totalPnL.toFixed(4)} SOL`}
-          color={totalPnL >= 0 ? "green" : "red"}
+          positive={totalPnL >= 0}
         />
-        <SummaryCard label="ACTIVE AGENTS" value={agents.filter((a) => a.status === "active").length} color="cyan" />
-        <SummaryCard label="OPEN POSITIONS" value={totalOpenPositions} color="gold" />
-        <SummaryCard label="TOTAL TRADES" value={totalTrades} color="green" />
+        <SummaryCard label="ACTIVE LEGIONS" value={agents.filter((a) => a.status === "active").length} />
+        <SummaryCard label="OPEN POSITIONS" value={totalOpenPositions} />
+        <SummaryCard label="TOTAL TRADES" value={totalTrades} />
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-2">
-          <span className="font-pixel text-[7px] text-meta-green/50">SORT:</span>
+          <span className="font-sans text-sm text-roman-stone">SORT:</span>
           {(["pnl", "fitness", "trades", "openPositions"] as const).map((sort) => (
             <button
               key={sort}
               onClick={() => setSortBy(sort)}
-              className={`font-pixel text-[7px] px-2 py-1 border transition-colors ${
+              className={`font-sans text-sm px-3 py-2 border-2 rounded transition-colors min-h-[44px] ${
                 sortBy === sort
-                  ? "border-meta-cyan text-meta-cyan bg-meta-cyan/10"
-                  : "border-meta-green/30 text-meta-green/50 hover:border-meta-green"
+                  ? "border-roman-stone text-roman-text bg-roman-bg-light"
+                  : "border-roman-stone/30 text-roman-stone hover:border-roman-stone"
               }`}
             >
               {sort === "openPositions" ? "POSITIONS" : sort.toUpperCase()}
@@ -216,7 +216,7 @@ export function AgentsDashboard() {
         </div>
 
         <div className="flex items-center gap-4">
-          <label className="flex items-center gap-2 cursor-pointer">
+          <label className="flex items-center gap-2 cursor-pointer min-h-[44px]">
             <input
               type="checkbox"
               checked={showOnlyActive}
@@ -224,55 +224,53 @@ export function AgentsDashboard() {
               className="hidden"
             />
             <div
-              className={`w-4 h-4 border-2 flex items-center justify-center transition-colors ${
-                showOnlyActive ? "border-meta-cyan bg-meta-cyan/20" : "border-meta-green/30"
+              className={`w-5 h-5 border-2 flex items-center justify-center rounded transition-colors ${
+                showOnlyActive ? "border-roman-stone bg-roman-stone/20" : "border-roman-stone/30"
               }`}
             >
-              {showOnlyActive && <span className="text-meta-cyan text-[8px]">✓</span>}
+              {showOnlyActive && <span className="text-roman-text text-sm">✓</span>}
             </div>
-            <span className="font-pixel text-[7px] text-meta-green/70">ACTIVE ONLY</span>
+            <span className="font-sans text-sm text-roman-text">ACTIVE ONLY</span>
           </label>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 px-3 py-2 bg-roman-bg-light rounded border border-roman-stone/30">
             <div
-              className={`h-2 w-2 rounded-full ${
-                isConnected ? "bg-meta-green animate-pulse" : "bg-meta-red"
+              className={`h-3 w-3 rounded-full ${
+                isConnected ? "bg-emerald-600 animate-pulse" : "bg-red-700"
               }`}
             />
-            <span className="font-pixel text-[6px] text-meta-green/50">
+            <span className="font-sans text-sm text-roman-stone">
               {isConnected ? "LIVE" : "OFFLINE"}
             </span>
           </div>
         </div>
       </div>
 
-      <div className="bg-meta-bg-card border-2 border-meta-green">
-        <div className="grid grid-cols-12 gap-2 p-3 border-b border-meta-green/30 font-pixel text-[6px] text-meta-green/50">
-          <div className="col-span-3">AGENT</div>
+      <div className="roman-tablet overflow-hidden">
+        <div className="grid grid-cols-12 gap-2 p-4 border-b-2 border-roman-stone/30 font-sans text-sm text-roman-stone font-medium">
+          <div className="col-span-3">LEGION</div>
           <div className="col-span-1 text-center">TYPE</div>
           <div className="col-span-2 text-right">PNL</div>
-          <div className="col-span-1 text-right">WIN %</div>
+          <div className="col-span-1 text-right">WIN%</div>
           <div className="col-span-1 text-right">TRADES</div>
           <div className="col-span-1 text-right">OPEN</div>
           <div className="col-span-2 text-right">UNREALIZED</div>
           <div className="col-span-1 text-right">FITNESS</div>
         </div>
 
-        <AnimatePresence>
-          {filteredAgents.map((agent) => (
+        {filteredAgents.length === 0 ? (
+          <div className="p-8 text-center">
+            <p className="font-sans text-lg text-roman-stone">NO LEGIONS FOUND</p>
+          </div>
+        ) : (
+          filteredAgents.map((agent) => (
             <AgentRow
               key={agent.id}
               agent={agent}
               isExpanded={expandedAgent === agent.id}
               onToggle={() => setExpandedAgent(expandedAgent === agent.id ? null : agent.id)}
             />
-          ))}
-        </AnimatePresence>
-
-        {filteredAgents.length === 0 && (
-          <div className="p-8 text-center">
-            <p className="font-pixel text-[8px] text-meta-green/50">NO AGENTS FOUND</p>
-          </div>
+          ))
         )}
       </div>
     </div>
@@ -282,23 +280,18 @@ export function AgentsDashboard() {
 function SummaryCard({
   label,
   value,
-  color,
+  positive,
 }: {
   label: string;
   value: string | number;
-  color: "green" | "cyan" | "gold" | "red";
+  positive?: boolean;
 }) {
-  const colorClasses = {
-    green: "text-meta-green",
-    cyan: "text-meta-cyan",
-    gold: "text-meta-gold",
-    red: "text-meta-red",
-  };
+  const valueColor = positive === undefined ? "text-roman-text" : positive ? "text-emerald-700" : "text-red-800";
 
   return (
-    <div className="bg-meta-bg-card border-2 border-meta-green/30 p-4">
-      <p className="font-pixel text-[6px] text-meta-green/50 mb-1">{label}</p>
-      <p className={`font-pixel text-lg ${colorClasses[color]}`}>{value}</p>
+    <div className="roman-tablet p-4">
+      <p className="font-sans text-sm text-roman-stone mb-1">{label}</p>
+      <p className={`font-serif text-2xl font-bold ${valueColor}`}>{value}</p>
     </div>
   );
 }
@@ -315,9 +308,9 @@ function AgentRow({
   const [trades, setTrades] = useState<Trade[]>(agent.trades ?? []);
   const [loadingTrades, setLoadingTrades] = useState(false);
 
-  const archetypeColor = ARCHETYPE_COLORS[agent.archetype ?? "momentum"] || "#00FF41";
+  const archetypeColor = ARCHETYPE_COLORS[agent.archetype ?? "momentum"] || "#8B7355";
   const realizedPnL = agent.liveStats?.realizedPnL ?? agent.performance.totalPnL;
-  const pnlColor = realizedPnL >= 0 ? "#00FF41" : "#FF0051";
+  const pnlPositive = realizedPnL >= 0;
   const openPositions = agent.openPositions ?? [];
   const unrealizedPnL = openPositions.reduce((sum, p) => sum + p.unrealizedPnL, 0);
   const totalTradesCount = agent.liveStats?.totalTrades ?? agent.performance.tradesExecuted;
@@ -335,14 +328,14 @@ function AgentRow({
   }, [isExpanded, agent.id, trades.length]);
 
   return (
-    <motion.div layout className="border-b border-meta-green/10">
+    <motion.div layout className="border-b border-roman-stone/20">
       <div
         onClick={onToggle}
-        className="grid grid-cols-12 gap-2 p-3 hover:bg-meta-green/5 transition-colors cursor-pointer"
+        className="grid grid-cols-12 gap-2 p-4 hover:bg-roman-bg-light/50 transition-colors cursor-pointer min-h-[56px] items-center"
       >
-        <div className="col-span-3 flex items-center gap-2">
+        <div className="col-span-3 flex items-center gap-3">
           <span
-            className={`font-pixel text-[6px] transform transition-transform ${
+            className={`font-sans text-sm transform transition-transform ${
               isExpanded ? "rotate-90" : ""
             }`}
           >
@@ -351,12 +344,12 @@ function AgentRow({
           <Link
             href={`/strategy/${agent.id}`}
             onClick={(e) => e.stopPropagation()}
-            className="font-pixel text-[7px] text-meta-green hover:text-meta-cyan truncate"
+            className="font-serif text-base text-roman-text hover:text-roman-stone truncate"
           >
             {agent.name || `AGENT-${agent.id.slice(0, 8)}`}
           </Link>
           {agent.status !== "active" && (
-            <span className="font-pixel text-[5px] px-1 py-0.5 bg-meta-red/20 text-meta-red">
+            <span className="font-sans text-xs px-2 py-1 bg-red-100 text-red-800 rounded">
               {agent.status.toUpperCase()}
             </span>
           )}
@@ -364,49 +357,46 @@ function AgentRow({
 
         <div className="col-span-1 flex justify-center">
           <span
-            className="font-pixel text-[6px] px-1 py-0.5"
-            style={{ backgroundColor: archetypeColor, color: "#0a0a0f" }}
+            className="font-sans text-xs px-2 py-1 rounded text-white"
+            style={{ backgroundColor: archetypeColor }}
           >
             {agent.archetype?.slice(0, 3).toUpperCase()}
           </span>
         </div>
 
-        <div className="col-span-2 font-pixel text-[7px] text-right" style={{ color: pnlColor }}>
-          {realizedPnL >= 0 ? "+" : ""}
+        <div className={`col-span-2 font-sans text-base text-right font-medium ${pnlPositive ? "text-emerald-700" : "text-red-800"}`}>
+          {pnlPositive ? "+" : ""}
           {realizedPnL.toFixed(4)} SOL
         </div>
 
-        <div className="col-span-1 font-pixel text-[7px] text-meta-cyan text-right">
+        <div className="col-span-1 font-sans text-base text-roman-text text-right">
           {(agent.performance.winRate * 100).toFixed(0)}%
         </div>
 
-        <div className="col-span-1 font-pixel text-[7px] text-meta-green/70 text-right">
+        <div className="col-span-1 font-sans text-base text-roman-text text-right">
           {totalTradesCount}
         </div>
 
-        <div className="col-span-1 font-pixel text-[7px] text-right">
+        <div className="col-span-1 font-sans text-base text-right">
           {openTradesCount > 0 ? (
-            <span className="text-meta-gold">{openTradesCount}</span>
+            <span className="text-amber-700 font-medium">{openTradesCount}</span>
           ) : (
-            <span className="text-meta-green/30">0</span>
+            <span className="text-roman-stone">0</span>
           )}
         </div>
 
-        <div
-          className="col-span-2 font-pixel text-[7px] text-right"
-          style={{ color: unrealizedPnL >= 0 ? "#00FF41" : "#FF0051" }}
-        >
+        <div className={`col-span-2 font-sans text-base text-right ${unrealizedPnL >= 0 ? "text-emerald-700" : "text-red-800"}`}>
           {openPositions.length > 0 ? (
             <>
               {unrealizedPnL >= 0 ? "+" : ""}
               {unrealizedPnL.toFixed(4)} SOL
             </>
           ) : (
-            <span className="text-meta-green/30">-</span>
+            <span className="text-roman-stone">-</span>
           )}
         </div>
 
-        <div className="col-span-1 font-pixel text-[7px] text-meta-gold text-right">
+        <div className="col-span-1 font-sans text-base text-roman-text text-right font-medium">
           {agent.performance.fitnessScore.toFixed(1)}
         </div>
       </div>
@@ -417,11 +407,11 @@ function AgentRow({
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="bg-meta-bg-light border-t border-meta-green/20"
+            className="bg-roman-bg-light border-t-2 border-roman-stone/20"
           >
             {openPositions.length > 0 && (
-              <div className="p-4 border-b border-meta-green/10">
-                <h4 className="font-pixel text-[7px] text-meta-gold mb-3">OPEN POSITIONS</h4>
+              <div className="p-4 border-b border-roman-stone/20">
+                <h4 className="font-serif text-lg text-roman-text mb-3">ACTIVE HOLDINGS</h4>
                 <div className="space-y-2">
                   {openPositions.map((pos) => (
                     <PositionRow key={pos.id} position={pos} />
@@ -431,21 +421,21 @@ function AgentRow({
             )}
 
             <div className="p-4">
-              <h4 className="font-pixel text-[7px] text-meta-cyan mb-3">RECENT TRADES</h4>
+              <h4 className="font-serif text-lg text-roman-text mb-3">RECENT CAMPAIGNS</h4>
               {loadingTrades ? (
                 <div className="space-y-2">
                   {[...Array(3)].map((_, i) => (
-                    <div key={i} className="h-8 bg-meta-bg-card animate-pulse" />
+                    <div key={i} className="h-12 bg-roman-bg-card animate-pulse rounded" />
                   ))}
                 </div>
               ) : trades.length > 0 ? (
-                <div className="space-y-1 max-h-48 overflow-y-auto">
+                <div className="space-y-2 max-h-64 overflow-y-auto">
                   {trades.slice(0, 15).map((trade) => (
                     <TradeRow key={trade.id} trade={trade} />
                   ))}
                 </div>
               ) : (
-                <p className="font-pixel text-[6px] text-meta-green/50">NO TRADES YET</p>
+                <p className="font-sans text-base text-roman-stone">NO CAMPAIGNS YET</p>
               )}
             </div>
           </motion.div>
@@ -456,46 +446,46 @@ function AgentRow({
 }
 
 function PositionRow({ position }: { position: Position }) {
-  const pnlColor = position.unrealizedPnL >= 0 ? "#00FF41" : "#FF0051";
+  const pnlPositive = position.unrealizedPnL >= 0;
   const tokenAddress = position.token?.address ?? position.tokenAddress ?? position.trade?.tokenAddress;
   const tokenSymbol = position.token?.symbol ?? position.tokenSymbol ?? position.trade?.tokenSymbol ?? "???";
   const tokenName = position.token?.name ?? position.tokenName ?? position.trade?.tokenName ?? "";
 
   return (
-    <div className="grid grid-cols-6 gap-2 p-2 bg-meta-bg-card border border-meta-gold/20">
+    <div className="grid grid-cols-6 gap-3 p-3 bg-roman-bg-card border border-roman-stone/30 rounded">
       <div className="col-span-2">
         {tokenAddress ? (
           <a
             href={`https://pump.fun/${tokenAddress}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="font-pixel text-[7px] text-meta-green hover:text-meta-cyan"
+            className="font-serif text-base text-roman-text hover:text-roman-stone font-medium"
           >
             {tokenSymbol}
           </a>
         ) : (
-          <span className="font-pixel text-[7px] text-meta-green">{tokenSymbol}</span>
+          <span className="font-serif text-base text-roman-text font-medium">{tokenSymbol}</span>
         )}
-        <p className="font-pixel text-[5px] text-meta-green/50">{tokenName}</p>
+        <p className="font-sans text-sm text-roman-stone">{tokenName}</p>
       </div>
       <div className="text-right">
-        <p className="font-pixel text-[5px] text-meta-green/50">ENTRY</p>
-        <p className="font-pixel text-[6px] text-meta-green">${position.entryPrice.toFixed(8)}</p>
+        <p className="font-sans text-xs text-roman-stone">ENTRY</p>
+        <p className="font-sans text-sm text-roman-text">${position.entryPrice.toFixed(8)}</p>
       </div>
       <div className="text-right">
-        <p className="font-pixel text-[5px] text-meta-green/50">CURRENT</p>
-        <p className="font-pixel text-[6px] text-meta-cyan">${position.currentPrice.toFixed(8)}</p>
+        <p className="font-sans text-xs text-roman-stone">CURRENT</p>
+        <p className="font-sans text-sm text-roman-text">${position.currentPrice.toFixed(8)}</p>
       </div>
       <div className="text-right">
-        <p className="font-pixel text-[5px] text-meta-green/50">SIZE</p>
-        <p className="font-pixel text-[6px] text-meta-green">{position.amountSol.toFixed(4)} SOL</p>
+        <p className="font-sans text-xs text-roman-stone">SIZE</p>
+        <p className="font-sans text-sm text-roman-text">{position.amountSol.toFixed(4)} SOL</p>
       </div>
       <div className="text-right">
-        <p className="font-pixel text-[5px] text-meta-green/50">UNREALIZED</p>
-        <p className="font-pixel text-[7px]" style={{ color: pnlColor }}>
-          {position.unrealizedPnL >= 0 ? "+" : ""}
+        <p className="font-sans text-xs text-roman-stone">UNREALIZED</p>
+        <p className={`font-sans text-base font-medium ${pnlPositive ? "text-emerald-700" : "text-red-800"}`}>
+          {pnlPositive ? "+" : ""}
           {position.unrealizedPnL.toFixed(4)} SOL
-          <span className="text-[5px] ml-1">
+          <span className="text-sm ml-1">
             ({position.unrealizedPnLPercent >= 0 ? "+" : ""}
             {(position.unrealizedPnLPercent * 100).toFixed(1)}%)
           </span>
@@ -508,33 +498,33 @@ function PositionRow({ position }: { position: Position }) {
 function TradeRow({ trade }: { trade: Trade }) {
   const isOpen = trade.status === "open";
   const pnl = trade.pnlSol ?? 0;
-  const pnlColor = pnl >= 0 ? "#00FF41" : "#FF0051";
+  const pnlPositive = pnl >= 0;
 
   return (
-    <div className="grid grid-cols-8 gap-2 p-2 bg-meta-bg-card/50 border border-meta-green/10 text-[6px]">
-      <div className="col-span-2 flex items-center gap-1">
-        <span className={`font-pixel ${isOpen ? "text-meta-cyan" : pnl >= 0 ? "text-meta-green" : "text-meta-red"}`}>
+    <div className="grid grid-cols-8 gap-2 p-3 bg-roman-bg-card border border-roman-stone/20 rounded text-sm">
+      <div className="col-span-2 flex items-center gap-2">
+        <span className={`font-sans font-medium ${isOpen ? "text-amber-700" : pnlPositive ? "text-emerald-700" : "text-red-800"}`}>
           {isOpen ? "OPEN" : "CLOSED"}
         </span>
         <a
           href={`https://pump.fun/${trade.tokenAddress}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="font-pixel text-meta-green hover:text-meta-cyan truncate"
+          className="font-sans text-roman-text hover:text-roman-stone truncate"
         >
           {trade.tokenSymbol}
         </a>
       </div>
-      <div className="text-right text-meta-green/70">${(trade.entryPrice ?? 0).toFixed(8)}</div>
-      <div className="text-right text-meta-green/70">
+      <div className="text-right text-roman-stone">${(trade.entryPrice ?? 0).toFixed(8)}</div>
+      <div className="text-right text-roman-stone">
         {trade.exitPrice ? `$${trade.exitPrice.toFixed(8)}` : "-"}
       </div>
-      <div className="text-right text-meta-green">{(trade.amountSol ?? 0).toFixed(4)} SOL</div>
-      <div className="text-right" style={{ color: isOpen ? "#888" : pnlColor }}>
-        {isOpen ? "-" : `${pnl >= 0 ? "+" : ""}${pnl.toFixed(4)}`}
+      <div className="text-right text-roman-text">{(trade.amountSol ?? 0).toFixed(4)} SOL</div>
+      <div className={`text-right font-medium ${isOpen ? "text-roman-stone" : pnlPositive ? "text-emerald-700" : "text-red-800"}`}>
+        {isOpen ? "-" : `${pnlPositive ? "+" : ""}${pnl.toFixed(4)}`}
       </div>
-      <div className="text-right text-meta-green/50">{trade.exitReason?.toUpperCase() || "-"}</div>
-      <div className="text-right text-meta-green/30">
+      <div className="text-right text-roman-stone">{trade.exitReason?.toUpperCase() || "-"}</div>
+      <div className="text-right text-roman-stone">
         {new Date(trade.entryTimestamp).toLocaleTimeString()}
       </div>
     </div>

@@ -15,12 +15,12 @@ export interface SpriteAnimation {
 }
 
 export const ARCHETYPE_COLORS: Record<string, string> = {
-  aggressive: "#FF0051",
-  conservative: "#00D9FF",
-  social: "#FFD700",
-  whale_follower: "#9B59B6",
-  sniper: "#00FF41",
-  momentum: "#FF8C00",
+  momentum: "#D4AF37", // Roman gold
+  mean_reversion: "#5B2C6F", // Imperial purple
+  breakout: "#C46A4E", // Terracotta/red
+  scalper: "#CD7F32", // Bronze
+  swing: "#5C5C3D", // Olive/legion green
+  default: "#E8E4D9",
 };
 
 export const ARCHETYPE_SPRITES: Record<string, number> = {
@@ -105,6 +105,32 @@ export class SpriteManager {
 
 export const spriteManager = new SpriteManager();
 
+const HELMET_STYLES = ["galea", "murmillo", "thraex", "hoplomachus"] as const;
+type HelmetStyle = (typeof HELMET_STYLES)[number];
+
+const ROMAN_PALETTES = [
+  { main: "#D4AF37", dark: "#8B7355", light: "#FFD700", accent: "#8B0000", skin: "#D4A574" }, // Gold
+  { main: "#CD7F32", dark: "#8B4513", light: "#DAA520", accent: "#800020", skin: "#C4956A" }, // Bronze
+  { main: "#B8860B", dark: "#6B4423", light: "#F0E68C", accent: "#5B2C6F", skin: "#E0B088" }, // Dark gold
+  { main: "#C0C0C0", dark: "#708090", light: "#E8E8E8", accent: "#4A0000", skin: "#C9A882" }, // Silver
+];
+
+type Palette = (typeof ROMAN_PALETTES)[number];
+
+interface GladiatorConfig {
+  helmetStyle: HelmetStyle;
+  palette: Palette;
+  hasCrest: boolean;
+  crestColor: string;
+  hasShield: boolean;
+  weaponType: "sword" | "trident" | "spear";
+}
+
+function seededRandom(hash: number, offset: number): number {
+  const x = Math.sin(hash + offset) * 10000;
+  return x - Math.floor(x);
+}
+
 export function generatePixelAvatar(
   seed: string,
   size: number = 32
@@ -113,33 +139,189 @@ export function generatePixelAvatar(
   canvas.width = size;
   canvas.height = size;
   const ctx = canvas.getContext("2d")!;
+  
+  ctx.imageSmoothingEnabled = false;
 
   const hash = seed.split("").reduce((acc, char) => {
     return char.charCodeAt(0) + ((acc << 5) - acc);
   }, 0);
 
-  const hue = Math.abs(hash % 360);
-  const mainColor = `hsl(${hue}, 70%, 50%)`;
-  const darkColor = `hsl(${hue}, 70%, 30%)`;
-  const lightColor = `hsl(${hue}, 70%, 70%)`;
+  const config: GladiatorConfig = {
+    helmetStyle: HELMET_STYLES[Math.abs(hash) % HELMET_STYLES.length],
+    palette: ROMAN_PALETTES[Math.abs(hash >> 4) % ROMAN_PALETTES.length],
+    hasCrest: (hash >> 8) % 3 !== 0,
+    crestColor: (hash >> 10) % 2 === 0 ? "#8B0000" : "#5B2C6F",
+    hasShield: (hash >> 12) % 2 === 0,
+    weaponType: (["sword", "trident", "spear"] as const)[Math.abs(hash >> 14) % 3],
+  };
 
-  const pixelSize = size / 8;
-
-  for (let y = 0; y < 8; y++) {
-    for (let x = 0; x < 4; x++) {
-      const shouldDraw = ((hash >> (y * 4 + x)) & 1) === 1;
-      if (shouldDraw) {
-        const colorChoice = ((hash >> (y * 4 + x + 16)) & 3);
-        ctx.fillStyle =
-          colorChoice === 0 ? mainColor : colorChoice === 1 ? darkColor : lightColor;
-
-        ctx.fillRect(x * pixelSize, y * pixelSize, pixelSize, pixelSize);
-        ctx.fillRect((7 - x) * pixelSize, y * pixelSize, pixelSize, pixelSize);
-      }
-    }
-  }
+  const scale = size / 40;
+  
+  drawGladiatorFigure(ctx, scale, config);
 
   return canvas;
+}
+
+function drawPixel(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, color: string): void {
+  ctx.fillStyle = color;
+  ctx.fillRect(Math.floor(x), Math.floor(y), Math.ceil(w), Math.ceil(h));
+}
+
+function drawGladiatorFigure(ctx: CanvasRenderingContext2D, scale: number, config: GladiatorConfig): void {
+  const { palette, helmetStyle, hasCrest, crestColor, hasShield, weaponType } = config;
+  const px = scale; // pixel size
+  
+  const centerX = 20 * scale;
+  const baseY = 38 * scale;
+
+  // Legs (2px wide each, 8px tall)
+  const legColor = palette.dark;
+  const skinColor = palette.skin;
+  
+  // Left leg
+  drawPixel(ctx, centerX - 4 * px, baseY - 8 * px, 2 * px, 5 * px, legColor); // armor
+  drawPixel(ctx, centerX - 4 * px, baseY - 3 * px, 2 * px, 2 * px, skinColor); // knee
+  drawPixel(ctx, centerX - 4 * px, baseY - 1 * px, 2 * px, 1 * px, "#4A3728"); // sandal
+  
+  // Right leg
+  drawPixel(ctx, centerX + 2 * px, baseY - 8 * px, 2 * px, 5 * px, legColor);
+  drawPixel(ctx, centerX + 2 * px, baseY - 3 * px, 2 * px, 2 * px, skinColor);
+  drawPixel(ctx, centerX + 2 * px, baseY - 1 * px, 2 * px, 1 * px, "#4A3728");
+
+  // Torso (6px wide, 8px tall) - starting from above legs
+  const torsoTop = baseY - 16 * px;
+  drawPixel(ctx, centerX - 3 * px, torsoTop, 6 * px, 8 * px, palette.main); // main armor
+  drawPixel(ctx, centerX - 3 * px, torsoTop, 6 * px, 1 * px, palette.light); // highlight top
+  drawPixel(ctx, centerX - 3 * px, torsoTop + 7 * px, 6 * px, 1 * px, palette.dark); // shadow bottom
+  
+  // Belt
+  drawPixel(ctx, centerX - 4 * px, torsoTop + 6 * px, 8 * px, 2 * px, palette.dark);
+  drawPixel(ctx, centerX - 1 * px, torsoTop + 6 * px, 2 * px, 2 * px, palette.light); // belt buckle
+
+  // Shield arm (left side) or bare arm
+  if (hasShield) {
+    // Arm behind shield
+    drawPixel(ctx, centerX - 6 * px, torsoTop + 1 * px, 2 * px, 4 * px, skinColor);
+    // Shield (round-ish)
+    drawPixel(ctx, centerX - 10 * px, torsoTop - 1 * px, 6 * px, 8 * px, palette.main);
+    drawPixel(ctx, centerX - 9 * px, torsoTop, 4 * px, 6 * px, palette.light);
+    drawPixel(ctx, centerX - 8 * px, torsoTop + 2 * px, 2 * px, 2 * px, palette.accent); // emblem
+  } else {
+    // Bare arm
+    drawPixel(ctx, centerX - 6 * px, torsoTop + 1 * px, 2 * px, 5 * px, skinColor);
+    drawPixel(ctx, centerX - 6 * px, torsoTop + 1 * px, 2 * px, 2 * px, palette.main); // shoulder guard
+  }
+
+  // Weapon arm (right side)
+  drawPixel(ctx, centerX + 4 * px, torsoTop + 1 * px, 2 * px, 5 * px, skinColor);
+  drawPixel(ctx, centerX + 4 * px, torsoTop + 1 * px, 2 * px, 2 * px, palette.main); // shoulder guard
+  
+  // Weapon
+  const weaponColor = "#A0A0A0"; // steel gray
+  const handleColor = "#5C4033"; // wood brown
+  
+  switch (weaponType) {
+    case "sword":
+      // Handle
+      drawPixel(ctx, centerX + 6 * px, torsoTop + 4 * px, 1 * px, 3 * px, handleColor);
+      // Blade
+      drawPixel(ctx, centerX + 6 * px, torsoTop - 6 * px, 1 * px, 10 * px, weaponColor);
+      drawPixel(ctx, centerX + 5 * px, torsoTop + 4 * px, 3 * px, 1 * px, palette.dark); // crossguard
+      break;
+    case "trident":
+      // Handle
+      drawPixel(ctx, centerX + 6 * px, torsoTop - 8 * px, 1 * px, 14 * px, handleColor);
+      // Prongs
+      drawPixel(ctx, centerX + 5 * px, torsoTop - 10 * px, 1 * px, 4 * px, weaponColor);
+      drawPixel(ctx, centerX + 6 * px, torsoTop - 12 * px, 1 * px, 6 * px, weaponColor);
+      drawPixel(ctx, centerX + 7 * px, torsoTop - 10 * px, 1 * px, 4 * px, weaponColor);
+      break;
+    case "spear":
+      // Handle
+      drawPixel(ctx, centerX + 6 * px, torsoTop - 6 * px, 1 * px, 12 * px, handleColor);
+      // Spearhead
+      drawPixel(ctx, centerX + 6 * px, torsoTop - 10 * px, 1 * px, 4 * px, weaponColor);
+      drawPixel(ctx, centerX + 5 * px, torsoTop - 8 * px, 1 * px, 2 * px, weaponColor);
+      drawPixel(ctx, centerX + 7 * px, torsoTop - 8 * px, 1 * px, 2 * px, weaponColor);
+      break;
+  }
+
+  // Neck
+  const neckY = torsoTop - 2 * px;
+  drawPixel(ctx, centerX - 1 * px, neckY, 2 * px, 2 * px, skinColor);
+
+  // Head/Helmet
+  const headY = neckY - 8 * px;
+  drawHelmetOnFigure(ctx, centerX, headY, px, helmetStyle, palette, hasCrest, crestColor);
+}
+
+function drawHelmetOnFigure(
+  ctx: CanvasRenderingContext2D,
+  centerX: number,
+  headY: number,
+  px: number,
+  style: HelmetStyle,
+  palette: Palette,
+  hasCrest: boolean,
+  crestColor: string
+): void {
+  // Base head shape (all helmets have this)
+  drawPixel(ctx, centerX - 3 * px, headY, 6 * px, 6 * px, palette.main);
+  drawPixel(ctx, centerX - 2 * px, headY + 1 * px, 4 * px, 4 * px, palette.light);
+  
+  // Face slit / visor
+  drawPixel(ctx, centerX - 2 * px, headY + 3 * px, 4 * px, 1 * px, "#1A1A1A");
+
+  switch (style) {
+    case "galea":
+      // Classic Roman soldier helmet with cheek guards
+      drawPixel(ctx, centerX - 4 * px, headY + 2 * px, 1 * px, 4 * px, palette.main); // left cheek
+      drawPixel(ctx, centerX + 3 * px, headY + 2 * px, 1 * px, 4 * px, palette.main); // right cheek
+      drawPixel(ctx, centerX - 3 * px, headY - 1 * px, 6 * px, 1 * px, palette.dark); // brow ridge
+      if (hasCrest) {
+        // Forward-facing crest
+        for (let i = 0; i < 5; i++) {
+          drawPixel(ctx, centerX - 1 * px, headY - (2 + i) * px, 2 * px, 1 * px, crestColor);
+        }
+      }
+      break;
+
+    case "murmillo":
+      // Fish-shaped crest helmet, tall and distinctive
+      drawPixel(ctx, centerX - 4 * px, headY - 1 * px, 8 * px, 2 * px, palette.main); // wide brim
+      drawPixel(ctx, centerX - 2 * px, headY - 2 * px, 4 * px, 1 * px, palette.dark); // top
+      if (hasCrest) {
+        // Tall fish-fin style crest
+        drawPixel(ctx, centerX - 1 * px, headY - 6 * px, 2 * px, 4 * px, crestColor);
+        drawPixel(ctx, centerX, headY - 8 * px, 1 * px, 2 * px, crestColor);
+      }
+      break;
+
+    case "thraex":
+      // Griffin-crested helmet with wide brim
+      drawPixel(ctx, centerX - 4 * px, headY + 1 * px, 8 * px, 1 * px, palette.main); // wide visor
+      drawPixel(ctx, centerX - 3 * px, headY - 1 * px, 6 * px, 1 * px, palette.dark);
+      if (hasCrest) {
+        // Curved griffin crest
+        drawPixel(ctx, centerX - 1 * px, headY - 3 * px, 2 * px, 2 * px, crestColor);
+        drawPixel(ctx, centerX + 1 * px, headY - 5 * px, 2 * px, 2 * px, crestColor);
+        drawPixel(ctx, centerX + 2 * px, headY - 6 * px, 1 * px, 1 * px, crestColor);
+      }
+      break;
+
+    case "hoplomachus":
+      // Greek-style with feather plumes
+      drawPixel(ctx, centerX - 4 * px, headY, 1 * px, 6 * px, palette.main); // left guard
+      drawPixel(ctx, centerX + 3 * px, headY, 1 * px, 6 * px, palette.main); // right guard
+      drawPixel(ctx, centerX - 3 * px, headY - 1 * px, 6 * px, 1 * px, palette.light); // crown
+      if (hasCrest) {
+        // Multiple feather plumes
+        drawPixel(ctx, centerX - 2 * px, headY - 4 * px, 1 * px, 3 * px, crestColor);
+        drawPixel(ctx, centerX, headY - 5 * px, 1 * px, 4 * px, crestColor);
+        drawPixel(ctx, centerX + 2 * px, headY - 4 * px, 1 * px, 3 * px, crestColor);
+      }
+      break;
+  }
 }
 
 export function drawHealthBar(
@@ -151,16 +333,44 @@ export function drawHealthBar(
   percent: number,
   colors: { bg: string; fill: string; border: string }
 ): void {
-  ctx.fillStyle = colors.bg;
+  const stoneGradient = ctx.createLinearGradient(x, y, x, y + height);
+  stoneGradient.addColorStop(0, "#E8E4D9");
+  stoneGradient.addColorStop(0.3, "#D4CFC4");
+  stoneGradient.addColorStop(0.7, "#C8C3B8");
+  stoneGradient.addColorStop(1, "#B8B3A8");
+  ctx.fillStyle = stoneGradient;
   ctx.fillRect(x, y, width, height);
 
-  const fillWidth = Math.max(0, Math.min(1, percent)) * width;
-  ctx.fillStyle = colors.fill;
-  ctx.fillRect(x, y, fillWidth, height);
+  ctx.strokeStyle = "#8B8578";
+  ctx.lineWidth = 0.5;
+  for (let i = 1; i < 4; i++) {
+    const lineY = y + (height / 4) * i;
+    ctx.beginPath();
+    ctx.moveTo(x, lineY);
+    ctx.lineTo(x + width, lineY);
+    ctx.stroke();
+  }
 
-  ctx.strokeStyle = colors.border;
-  ctx.lineWidth = 1;
+  const fillWidth = Math.max(0, Math.min(1, percent)) * width;
+  if (fillWidth > 0) {
+    const fillGradient = ctx.createLinearGradient(x, y, x, y + height);
+    fillGradient.addColorStop(0, "#C46A4E");
+    fillGradient.addColorStop(0.5, "#A85A3E");
+    fillGradient.addColorStop(1, "#8B4A2E");
+    ctx.fillStyle = fillGradient;
+    ctx.fillRect(x + 1, y + 1, fillWidth - 2, height - 2);
+  }
+
+  ctx.strokeStyle = "#6B5B4F";
+  ctx.lineWidth = 2;
   ctx.strokeRect(x, y, width, height);
+
+  ctx.strokeStyle = "#4A3F35";
+  ctx.lineWidth = 1;
+  ctx.strokeRect(x - 1, y - 1, width + 2, height + 2);
+
+  ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
+  ctx.fillRect(x + 2, y + 2, width - 4, height * 0.3);
 }
 
 export function drawPixelText(
@@ -168,12 +378,16 @@ export function drawPixelText(
   text: string,
   x: number,
   y: number,
-  fontSize: number = 8,
-  color: string = "#00FF41"
+  fontSize: number = 12,
+  color: string = "#3D2914"
 ): void {
-  ctx.font = `${fontSize}px "Press Start 2P", monospace`;
-  ctx.fillStyle = color;
+  ctx.font = `bold ${fontSize}px "Cinzel", serif`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
+
+  ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+  ctx.fillText(text, x + 1, y + 1);
+
+  ctx.fillStyle = color;
   ctx.fillText(text, x, y);
 }

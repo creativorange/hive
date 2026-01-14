@@ -53,36 +53,36 @@ export function EvolutionTimeline() {
 
   if (loading) {
     return (
-      <div className="bg-meta-bg-card border-2 border-meta-green p-4">
-        <div className="h-40 bg-meta-bg-light animate-pulse" />
+      <div className="bg-roman-bg-card border-2 border-roman-gold p-4">
+        <div className="h-40 bg-roman-bg-light animate-pulse" />
       </div>
     );
   }
 
   return (
-    <div className="bg-meta-bg-card border-2 border-meta-green p-4">
+    <div className="bg-roman-bg-card border-2 border-roman-gold p-4">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="font-pixel text-sm text-meta-cyan">EVOLUTION TIMELINE</h2>
+        <h2 className="font-serif text-lg text-roman-text">DYNASTY TIMELINE</h2>
         <div className="flex gap-2">
           <button
             onClick={() => setView("timeline")}
-            className={`font-pixel text-[6px] px-2 py-1 border ${
+            className={`font-serif text-sm px-2 py-1 border ${
               view === "timeline"
-                ? "border-meta-cyan text-meta-cyan"
-                : "border-meta-green/30 text-meta-green/50"
+                ? "border-roman-text text-roman-text"
+                : "border-roman-stone text-roman-stone"
             }`}
           >
-            TIMELINE
+            LINEAGE
           </button>
           <button
             onClick={() => setView("chart")}
-            className={`font-pixel text-[6px] px-2 py-1 border ${
+            className={`font-serif text-sm px-2 py-1 border ${
               view === "chart"
-                ? "border-meta-cyan text-meta-cyan"
-                : "border-meta-green/30 text-meta-green/50"
+                ? "border-roman-text text-roman-text"
+                : "border-roman-stone text-roman-stone"
             }`}
           >
-            CHART
+            PROSPERITY
           </button>
         </div>
       </div>
@@ -90,12 +90,12 @@ export function EvolutionTimeline() {
       {view === "timeline" ? (
         <div
           ref={scrollRef}
-          className="overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-meta-green"
+          className="overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-roman-gold"
         >
           <div className="flex gap-4 min-w-max">
             {cycles.length === 0 ? (
-              <p className="font-pixel text-[8px] text-meta-green/50 py-8">
-                NO EVOLUTION CYCLES YET
+              <p className="font-serif text-base text-roman-stone py-8">
+                NO DYNASTIES RECORDED
               </p>
             ) : (
               cycles.map((cycle, index) => (
@@ -107,47 +107,48 @@ export function EvolutionTimeline() {
       ) : (
         <div className="h-60">
           {fitnessHistory.length === 0 ? (
-            <p className="font-pixel text-[8px] text-meta-green/50 text-center py-8">
-              NO FITNESS DATA YET
+            <p className="font-serif text-base text-roman-stone text-center py-8">
+              NO PROSPERITY DATA YET
             </p>
           ) : (
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={fitnessHistory}>
                 <XAxis
                   dataKey="generation"
-                  stroke="#00FF41"
-                  tick={{ fill: "#00FF41", fontSize: 8 }}
-                  tickLine={{ stroke: "#00FF41" }}
+                  stroke="#3D2B1F"
+                  tick={{ fill: "#3D2B1F", fontSize: 12 }}
+                  tickLine={{ stroke: "#3D2B1F" }}
                 />
                 <YAxis
-                  stroke="#00FF41"
-                  tick={{ fill: "#00FF41", fontSize: 8 }}
-                  tickLine={{ stroke: "#00FF41" }}
+                  stroke="#3D2B1F"
+                  tick={{ fill: "#3D2B1F", fontSize: 12 }}
+                  tickLine={{ stroke: "#3D2B1F" }}
                   domain={[0, 100]}
                 />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#1a1a24",
-                    border: "1px solid #00FF41",
-                    fontFamily: '"Press Start 2P"',
-                    fontSize: 8,
+                    backgroundColor: "#FBF7F0",
+                    border: "1px solid #3D2B1F",
+                    fontFamily: 'serif',
+                    fontSize: 14,
+                    color: "#3D2B1F",
                   }}
-                  labelStyle={{ color: "#00FF41" }}
+                  labelStyle={{ color: "#3D2B1F" }}
                 />
                 <Line
                   type="monotone"
                   dataKey="avgFitness"
-                  stroke="#00D9FF"
+                  stroke="#7D3C98"
                   strokeWidth={2}
-                  dot={{ fill: "#00D9FF", r: 3 }}
+                  dot={{ fill: "#7D3C98", r: 3 }}
                   name="Avg Fitness"
                 />
                 <Line
                   type="monotone"
                   dataKey="bestFitness"
-                  stroke="#FFD700"
+                  stroke="#F4D03F"
                   strokeWidth={2}
-                  dot={{ fill: "#FFD700", r: 3 }}
+                  dot={{ fill: "#F4D03F", r: 3 }}
                   name="Best Fitness"
                 />
               </LineChart>
@@ -164,10 +165,10 @@ function CycleNode({ cycle, index }: { cycle: EvolutionCycle; index: number }) {
 
   const fitnessColor =
     cycle.avgFitness >= 70
-      ? "#00FF41"
+      ? "#D4AF37"
       : cycle.avgFitness >= 50
-      ? "#FFD700"
-      : "#FF0051";
+      ? "#F4D03F"
+      : "#8B0000";
 
   return (
     <motion.div
@@ -184,19 +185,19 @@ function CycleNode({ cycle, index }: { cycle: EvolutionCycle; index: number }) {
           className="w-16 h-16 border-2 flex items-center justify-center transition-all group-hover:scale-110"
           style={{ borderColor: fitnessColor }}
         >
-          <span className="font-pixel text-lg" style={{ color: fitnessColor }}>
+          <span className="font-serif text-lg" style={{ color: fitnessColor }}>
             {cycle.generation}
           </span>
         </div>
 
         <div className="absolute -top-1 -right-1 flex gap-0.5">
           {cycle.newlyBorn.length > 0 && (
-            <span className="font-pixel text-[5px] px-1 bg-meta-cyan text-meta-bg">
+            <span className="font-serif text-xs px-1 bg-roman-purple-light text-roman-bg">
               +{cycle.newlyBorn.length}
             </span>
           )}
           {cycle.dead.length > 0 && (
-            <span className="font-pixel text-[5px] px-1 bg-meta-red text-meta-bg">
+            <span className="font-serif text-xs px-1 bg-roman-crimson text-roman-bg">
               -{cycle.dead.length}
             </span>
           )}
@@ -204,10 +205,10 @@ function CycleNode({ cycle, index }: { cycle: EvolutionCycle; index: number }) {
       </button>
 
       <div className="mt-2 text-center">
-        <p className="font-pixel text-[6px] text-meta-gold">
+        <p className="font-serif text-sm text-roman-stone">
           {cycle.avgFitness.toFixed(1)}
         </p>
-        <p className="font-pixel text-[5px] text-meta-green/30">
+        <p className="font-serif text-xs text-roman-stone">
           {new Date(cycle.cycleTimestamp).toLocaleDateString()}
         </p>
       </div>
@@ -216,21 +217,21 @@ function CycleNode({ cycle, index }: { cycle: EvolutionCycle; index: number }) {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="absolute top-full mt-2 left-0 bg-meta-bg-card border border-meta-green p-2 z-10 min-w-32"
+          className="absolute top-full mt-2 left-0 bg-roman-bg-card border border-roman-gold p-2 z-10 min-w-32"
         >
-          <p className="font-pixel text-[6px] text-meta-green mb-1">
+          <p className="font-serif text-sm text-roman-text mb-1">
             GEN {cycle.generation}
           </p>
-          <div className="space-y-1 text-[5px]">
-            <p className="text-meta-cyan">
+          <div className="space-y-1 text-xs">
+            <p className="text-roman-text">
               SURVIVORS: {cycle.survivors.length}
             </p>
-            <p className="text-meta-green">BORN: {cycle.newlyBorn.length}</p>
-            <p className="text-meta-red">DEAD: {cycle.dead.length}</p>
-            <p className="text-meta-gold">
+            <p className="text-roman-stone">BORN: {cycle.newlyBorn.length}</p>
+            <p className="text-roman-crimson">DEAD: {cycle.dead.length}</p>
+            <p className="text-roman-stone">
               BEST: {cycle.bestFitness.toFixed(1)}
             </p>
-            <p className="text-meta-green/50">
+            <p className="text-roman-stone">
               PNL: {cycle.totalPnlSol.toFixed(4)} SOL
             </p>
           </div>
@@ -238,7 +239,7 @@ function CycleNode({ cycle, index }: { cycle: EvolutionCycle; index: number }) {
       )}
 
       {index < 19 && (
-        <div className="absolute left-full top-1/2 w-4 h-0.5 bg-meta-green/30" />
+        <div className="absolute left-full top-1/2 w-4 h-0.5 bg-roman-stone" />
       )}
     </motion.div>
   );

@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "$META - Evolutionary Trading Bot",
-  description: "Genetic algorithm-powered autonomous trading system for Pump.fun tokens",
+  title: "Crassus AI - Autonomous Trading Imperium",
+  description: "Autonomous AI trading strategies competing for dominance",
   icons: {
     icon: "/favicon.ico",
   },
@@ -15,63 +15,76 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <head>
         <link
-          href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
           rel="stylesheet"
         />
       </head>
-      <body className="min-h-screen bg-meta-bg text-meta-green antialiased">
+      <body className="min-h-screen bg-roman-bg text-roman-text antialiased font-sans">
         <div className="relative">
-          <header className="sticky top-0 z-50 border-b-2 border-meta-green/30 bg-meta-bg/95 backdrop-blur">
-            <div className="container mx-auto flex items-center justify-between px-4 py-4">
+          <header className="sticky top-0 z-50 border-b-2 border-roman-stone bg-roman-bg-card/95 backdrop-blur">
+            <div className="container mx-auto flex items-center justify-between px-4 py-5">
               <div className="flex items-center gap-4">
-                <h1 className="font-pixel text-xl text-glow">$META</h1>
-                <span className="hidden font-pixel text-[8px] text-meta-cyan sm:inline">
-                  EVOLUTIONARY TRADING
+                <span className="text-2xl" aria-hidden="true">🏛️</span>
+                <h1 className="font-serif text-3xl md:text-4xl font-bold text-roman-crimson tracking-widest">
+                  CRASSUS
+                </h1>
+                <span className="hidden font-serif text-base text-roman-stone tracking-[0.2em] md:inline uppercase">
+                  Trading Imperium
                 </span>
               </div>
-              <nav className="flex items-center gap-4">
+              <nav className="flex items-center gap-2 md:gap-4">
                 <a
                   href="/"
-                  className="font-pixel text-[8px] text-meta-green hover:text-meta-cyan transition-colors"
+                  className="font-serif text-base md:text-lg text-roman-text hover:text-roman-crimson transition-colors tracking-wider uppercase px-4 py-3 min-h-[44px] min-w-[44px] flex items-center justify-center"
                 >
-                  ARENA
+                  Colosseum
                 </a>
+                <div className="column-divider hidden md:block" />
                 <a
                   href="/agents"
-                  className="font-pixel text-[8px] text-meta-green hover:text-meta-cyan transition-colors"
+                  className="font-serif text-base md:text-lg text-roman-text hover:text-roman-crimson transition-colors tracking-wider uppercase px-4 py-3 min-h-[44px] min-w-[44px] flex items-center justify-center"
                 >
-                  AGENTS
+                  Legions
                 </a>
+                <div className="column-divider hidden md:block" />
                 <a
                   href="/graveyard"
-                  className="font-pixel text-[8px] text-meta-green hover:text-meta-cyan transition-colors"
+                  className="font-serif text-base md:text-lg text-roman-text hover:text-roman-crimson transition-colors tracking-wider uppercase px-4 py-3 min-h-[44px] min-w-[44px] flex items-center justify-center"
                 >
-                  GRAVEYARD
+                  Catacombs
                 </a>
+                <div className="column-divider hidden md:block" />
                 <a
                   href="/lab"
-                  className="font-pixel text-[8px] text-meta-green hover:text-meta-cyan transition-colors"
+                  className="font-serif text-base md:text-lg text-roman-text hover:text-roman-crimson transition-colors tracking-wider uppercase px-4 py-3 min-h-[44px] min-w-[44px] flex items-center justify-center"
                 >
-                  LAB
+                  Senate
                 </a>
-                <div className="h-4 w-px bg-meta-green/30" />
-                <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-meta-green animate-pulse" />
-                  <span className="font-pixel text-[6px] text-meta-green">LIVE</span>
+                <div className="h-8 w-px bg-roman-stone/50 mx-2" />
+                <div className="flex items-center gap-2 px-3 py-2 bg-roman-bg-light rounded-sm border border-roman-purple">
+                  <div className="h-3 w-3 rounded-full bg-roman-purple animate-pulse" />
+                  <span className="font-sans text-sm text-roman-purple uppercase tracking-wider font-medium">Paper</span>
                 </div>
               </nav>
             </div>
           </header>
 
-          <main className="container mx-auto px-4 py-6">{children}</main>
+          <main className="container mx-auto px-4 py-8">{children}</main>
 
-          <footer className="border-t-2 border-meta-green/30 py-4">
+          <footer className="border-t-2 border-roman-stone py-6 bg-roman-bg-light">
             <div className="container mx-auto px-4 text-center">
-              <p className="font-pixel text-[6px] text-meta-green/50">
-                $META AUTONOMOUS TRADING SYSTEM - GEN 0
+              <div className="flex items-center justify-center gap-3 mb-2">
+                <span className="text-xl" aria-hidden="true">🏛️</span>
+                <p className="font-serif text-lg text-roman-stone tracking-[0.15em] uppercase">
+                  Crassus AI Autonomous Trading Imperium
+                </p>
+                <span className="text-xl" aria-hidden="true">🏛️</span>
+              </div>
+              <p className="font-sans text-base text-roman-stone/70">
+                SPQR · Anno Domini MMXXVI
               </p>
             </div>
           </footer>

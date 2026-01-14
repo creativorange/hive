@@ -7,10 +7,10 @@ export default function LabPage() {
   return (
     <div className="space-y-8">
       <div className="text-center mb-8">
-        <h1 className="font-pixel text-xl text-meta-cyan text-glow mb-2">
-          BREEDING LAB
+        <h1 className="font-serif text-xl text-roman-text mb-2">
+          THE COLOSSEUM
         </h1>
-        <p className="font-pixel text-[8px] text-meta-green/50">
+        <p className="font-serif text-lg text-roman-stone">
           WITNESS EVOLUTION IN ACTION
         </p>
       </div>

@@ -6,6 +6,18 @@ export class TokenEvaluator {
     const reasons: string[] = [];
     let score = 0;
 
+    // Only buy pump.fun tokens (addresses end with "pump")
+    if (!token.address.toLowerCase().endsWith("pump")) {
+      return {
+        shouldTrade: false,
+        score: 0,
+        matchedPatterns: [],
+        matchedKeywords: [],
+        socialScore: 0,
+        reasons: ["Not a pump.fun token"],
+      };
+    }
+
     if (
       token.marketCap < strategy.genes.entryMcapMin ||
       token.marketCap > strategy.genes.entryMcapMax

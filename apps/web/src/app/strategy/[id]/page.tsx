@@ -81,8 +81,8 @@ export default function StrategyPage() {
   if (loading) {
     return (
       <div className="space-y-4">
-        <div className="h-32 bg-meta-bg-card animate-pulse" />
-        <div className="h-64 bg-meta-bg-card animate-pulse" />
+        <div className="h-32 bg-roman-bg-card animate-pulse" />
+        <div className="h-64 bg-roman-bg-card animate-pulse" />
       </div>
     );
   }
@@ -90,7 +90,7 @@ export default function StrategyPage() {
   if (error || !strategy) {
     return (
       <div className="text-center py-16">
-        <p className="font-pixel text-meta-red">
+        <p className="font-serif text-red-800">
           {error || "Strategy not found"}
         </p>
       </div>
@@ -99,7 +99,7 @@ export default function StrategyPage() {
 
   const archetypeColor = ARCHETYPE_COLORS[strategy.archetype ?? "momentum"];
   const totalPnL = strategy.performance?.totalPnL ?? 0;
-  const pnlColor = totalPnL >= 0 ? "#00FF41" : "#FF0051";
+  const pnlColor = totalPnL >= 0 ? "rgb(4, 120, 87)" : "rgb(153, 27, 27)";
 
   const pnlData =
     strategy.trades?.map((trade, i) => ({
@@ -116,33 +116,33 @@ export default function StrategyPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-meta-bg-card border-2 p-6"
+        className="bg-roman-bg-card border-2 p-6"
         style={{ borderColor: archetypeColor }}
       >
         <div className="flex items-start justify-between mb-6">
           <div>
-            <h1 className="font-pixel text-xl text-meta-green text-glow">
+            <h1 className="font-serif text-xl text-roman-text">
               {strategy.name || `STRATEGY-${strategy.id.slice(0, 8)}`}
             </h1>
             <div className="flex items-center gap-2 mt-2">
               <span
-                className="font-pixel text-[8px] px-2 py-1"
+                className="font-serif text-sm px-2 py-1"
                 style={{ backgroundColor: archetypeColor, color: "#0a0a0f" }}
               >
                 {strategy.archetype?.toUpperCase()}
               </span>
-              <span className="font-pixel text-[8px] text-meta-green/50">
+              <span className="font-serif text-sm text-roman-text/50">
                 GEN {strategy.generation}
               </span>
               <span
-                className={`font-pixel text-[8px] px-2 py-1 ${
+                className={`font-serif text-sm px-2 py-1 ${
                   strategy.status === "active"
-                    ? "bg-meta-green text-meta-bg"
+                    ? "bg-emerald-700 text-white"
                     : strategy.status === "dead"
-                    ? "bg-meta-red text-meta-bg"
+                    ? "bg-red-800 text-white"
                     : strategy.status === "needs_funding"
-                    ? "bg-meta-gold text-meta-bg animate-pulse"
-                    : "bg-meta-cyan text-meta-bg"
+                    ? "bg-roman-gold text-roman-bg-card animate-pulse"
+                    : "bg-roman-purple text-white"
                 }`}
               >
                 {strategy.status === "needs_funding" ? "NEEDS FUNDING" : strategy.status.toUpperCase()}
@@ -151,11 +151,11 @@ export default function StrategyPage() {
           </div>
 
           <div className="text-right">
-            <p className="font-pixel text-[8px] text-meta-green/50">
+            <p className="font-serif text-sm text-roman-text/50">
               TOTAL PNL
             </p>
             <p
-              className="font-pixel text-2xl text-glow"
+              className="font-serif text-2xl"
               style={{ color: pnlColor }}
             >
               {totalPnL >= 0 ? "+" : ""}
@@ -173,7 +173,7 @@ export default function StrategyPage() {
           <StatBox
             label="WIN RATE"
             value={`${((strategy.performance?.winRate ?? 0) * 100).toFixed(1)}%`}
-            color="cyan"
+            color="purple"
           />
           <StatBox
             label="TRADES"
@@ -193,12 +193,12 @@ export default function StrategyPage() {
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="bg-meta-bg-card border-2 border-meta-gold p-6"
+          className="bg-roman-bg-card border-2 border-roman-gold p-6"
         >
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="font-pixel text-lg text-meta-gold mb-2">⚠️ AGENT NEEDS FUNDING</h2>
-              <p className="font-pixel text-[8px] text-meta-green/70">
+              <h2 className="font-serif text-lg text-roman-gold mb-2">⚠️ AGENT NEEDS FUNDING</h2>
+              <p className="font-serif text-sm text-roman-text/70">
                 This agent has depleted its wallet. Fund it to reactivate trading.
               </p>
             </div>
@@ -210,17 +210,17 @@ export default function StrategyPage() {
                   step="0.1"
                   value={fundAmount}
                   onChange={(e) => setFundAmount(parseFloat(e.target.value) || 0)}
-                  className="w-20 bg-meta-bg-light border border-meta-gold/50 text-meta-gold font-pixel text-[10px] px-2 py-1 text-center"
+                  className="w-20 bg-roman-bg-card border border-roman-gold/50 text-roman-gold font-serif text-sm px-2 py-1 text-center"
                 />
-                <span className="font-pixel text-[8px] text-meta-gold">SOL</span>
+                <span className="font-serif text-sm text-roman-gold">SOL</span>
               </div>
               <button
                 onClick={handleFund}
                 disabled={funding || fundAmount <= 0}
-                className={`font-pixel text-[10px] px-4 py-2 border-2 transition-all ${
+                className={`font-serif text-sm px-4 py-2 border-2 transition-all ${
                   funding
-                    ? "border-meta-gold/50 text-meta-gold/50 cursor-wait"
-                    : "border-meta-gold text-meta-gold hover:bg-meta-gold hover:text-meta-bg"
+                    ? "border-roman-gold/50 text-roman-gold/50 cursor-wait"
+                    : "border-roman-gold text-roman-gold hover:bg-roman-gold hover:text-roman-bg-card"
                 }`}
               >
                 {funding ? "FUNDING..." : "FUND AGENT"}
@@ -236,10 +236,10 @@ export default function StrategyPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05 }}
-          className="bg-meta-bg-card border-2 border-meta-gold p-4"
+          className="bg-roman-bg-card border-2 border-roman-gold p-4"
         >
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-pixel text-sm text-meta-gold">AGENT WALLET</h2>
+            <h2 className="font-serif text-sm text-roman-gold">AGENT WALLET</h2>
             {strategy.status === "active" && (
               <div className="flex items-center gap-2">
                 <input
@@ -248,15 +248,15 @@ export default function StrategyPage() {
                   step="0.1"
                   value={fundAmount}
                   onChange={(e) => setFundAmount(parseFloat(e.target.value) || 0)}
-                  className="w-16 bg-meta-bg-light border border-meta-green/30 text-meta-green font-pixel text-[8px] px-2 py-1 text-center"
+                  className="w-16 bg-roman-bg-card border border-roman-stone text-roman-text font-serif text-sm px-2 py-1 text-center"
                 />
                 <button
                   onClick={handleFund}
                   disabled={funding || fundAmount <= 0}
-                  className={`font-pixel text-[8px] px-3 py-1 border transition-all ${
+                  className={`font-serif text-sm px-3 py-1 border transition-all ${
                     funding
-                      ? "border-meta-green/30 text-meta-green/30 cursor-wait"
-                      : "border-meta-green/50 text-meta-green/70 hover:border-meta-green hover:text-meta-green"
+                      ? "border-roman-stone text-roman-text/30 cursor-wait"
+                      : "border-roman-stone text-roman-text/70 hover:border-roman-text hover:text-roman-text"
                   }`}
                 >
                   {funding ? "..." : "+ ADD"}
@@ -273,7 +273,7 @@ export default function StrategyPage() {
             <StatBox
               label="LOCKED"
               value={`${strategy.wallet.locked.toFixed(4)} SOL`}
-              color="cyan"
+              color="purple"
             />
             <StatBox
               label="AVAILABLE"
@@ -305,15 +305,15 @@ export default function StrategyPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-meta-bg-card border-2 border-meta-cyan p-4"
+          className="bg-roman-bg-card border-2 border-roman-purple p-4"
         >
-          <h2 className="font-pixel text-sm text-meta-cyan mb-4">
+          <h2 className="font-serif text-sm text-roman-purple mb-4">
             OPEN POSITIONS ({strategy.positions.length})
           </h2>
           <div className="overflow-x-auto">
-            <table className="w-full text-[6px]">
+            <table className="w-full text-xs">
               <thead>
-                <tr className="text-meta-green/50 text-left">
+                <tr className="text-roman-text/50 text-left">
                   <th className="p-2">TOKEN</th>
                   <th className="p-2">ENTRY PRICE</th>
                   <th className="p-2">CURRENT PRICE</th>
@@ -326,40 +326,40 @@ export default function StrategyPage() {
                 {strategy.positions.map((position) => {
                   const holdTimeMs = Date.now() - position.openedAt;
                   const holdMins = Math.floor(holdTimeMs / 60000);
-                  const pnlColor = position.unrealizedPnL >= 0 ? "#00FF41" : "#FF0051";
+                  const pnlPositionColor = position.unrealizedPnL >= 0 ? "rgb(4, 120, 87)" : "rgb(153, 27, 27)";
                   const tokenSymbol = position.tokenSymbol ?? position.token?.symbol ?? "???";
                   const tokenAddress = position.tokenAddress ?? position.token?.address ?? "";
                   
                   return (
-                    <tr key={position.id} className="border-t border-meta-cyan/20">
+                    <tr key={position.id} className="border-t border-roman-purple/20">
                       <td className="p-2">
                         <a
                           href={`https://pump.fun/${tokenAddress}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-meta-cyan hover:text-meta-green hover:underline"
+                          className="text-roman-purple hover:text-roman-text hover:underline"
                         >
                           {tokenSymbol}
                         </a>
                       </td>
-                      <td className="p-2 text-meta-green/70">
+                      <td className="p-2 text-roman-text/70">
                         ${position.entryPrice.toFixed(8)}
                       </td>
-                      <td className="p-2 text-meta-green/70">
+                      <td className="p-2 text-roman-text/70">
                         ${position.currentPrice.toFixed(8)}
                       </td>
-                      <td className="p-2 text-meta-green">
+                      <td className="p-2 text-roman-text">
                         {position.amountSol.toFixed(4)} SOL
                       </td>
-                      <td className="p-2" style={{ color: pnlColor }}>
+                      <td className="p-2" style={{ color: pnlPositionColor }}>
                         {position.unrealizedPnL >= 0 ? "+" : ""}
                         {position.unrealizedPnL.toFixed(4)} SOL
-                        <span className="text-[5px] ml-1">
+                        <span className="text-xs ml-1">
                           ({position.unrealizedPnLPercent >= 0 ? "+" : ""}
                           {(position.unrealizedPnLPercent * 100).toFixed(1)}%)
                         </span>
                       </td>
-                      <td className="p-2 text-meta-green/50">
+                      <td className="p-2 text-roman-text/50">
                         {holdMins}min
                       </td>
                     </tr>
@@ -376,10 +376,10 @@ export default function StrategyPage() {
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-meta-bg-card border-2 border-meta-green p-4"
+          className="bg-roman-bg-card border-2 border-roman-stone p-4"
         >
-          <h2 className="font-pixel text-sm text-meta-cyan mb-4">GENES</h2>
-          <div className="grid grid-cols-2 gap-3 text-[7px]">
+          <h2 className="font-serif text-sm text-roman-purple mb-4">GENES</h2>
+          <div className="grid grid-cols-2 gap-3 text-sm">
             <GeneRow
               label="MCAP RANGE"
               value={`$${(strategy.genes.entryMcapMin ?? 0).toFixed(0)} - $${(strategy.genes.entryMcapMax ?? 0).toFixed(0)}`}
@@ -415,14 +415,14 @@ export default function StrategyPage() {
           </div>
 
           <div className="mt-4">
-            <p className="font-pixel text-[6px] text-meta-cyan mb-2">
+            <p className="font-serif text-xs text-roman-purple mb-2">
               BUY PATTERNS
             </p>
             <div className="flex flex-wrap gap-1">
               {strategy.genes.buyPatterns.map((pattern) => (
                 <span
                   key={pattern}
-                  className="font-pixel text-[5px] px-1 py-0.5 bg-meta-bg-light border border-meta-green/30 text-meta-green"
+                  className="font-serif text-xs px-2 py-1 bg-roman-bg-card border border-roman-stone text-roman-text"
                 >
                   {pattern}
                 </span>
@@ -431,14 +431,14 @@ export default function StrategyPage() {
           </div>
 
           <div className="mt-4">
-            <p className="font-pixel text-[6px] text-meta-cyan mb-2">
+            <p className="font-serif text-xs text-roman-purple mb-2">
               TOKEN KEYWORDS
             </p>
             <div className="flex flex-wrap gap-1">
               {strategy.genes.tokenNameKeywords.map((keyword) => (
                 <span
                   key={keyword}
-                  className="font-pixel text-[5px] px-1 py-0.5 bg-meta-bg-light border border-meta-cyan/30 text-meta-cyan"
+                  className="font-serif text-xs px-2 py-1 bg-roman-bg-card border border-roman-purple/30 text-roman-purple"
                 >
                   {keyword}
                 </span>
@@ -451,13 +451,13 @@ export default function StrategyPage() {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-meta-bg-card border-2 border-meta-green p-4"
+          className="bg-roman-bg-card border-2 border-roman-stone p-4"
         >
-          <h2 className="font-pixel text-sm text-meta-cyan mb-4">
+          <h2 className="font-serif text-sm text-roman-purple mb-4">
             PNL HISTORY
           </h2>
           {pnlData.length === 0 ? (
-            <p className="font-pixel text-[8px] text-meta-green/50 text-center py-8">
+            <p className="font-serif text-sm text-roman-text/50 text-center py-8">
               NO TRADES YET
             </p>
           ) : (
@@ -466,25 +466,25 @@ export default function StrategyPage() {
                 <LineChart data={pnlData}>
                   <XAxis
                     dataKey="trade"
-                    stroke="#00FF41"
-                    tick={{ fill: "#00FF41", fontSize: 8 }}
+                    stroke="rgb(68, 64, 60)"
+                    tick={{ fill: "rgb(68, 64, 60)", fontSize: 12 }}
                   />
                   <YAxis
-                    stroke="#00FF41"
-                    tick={{ fill: "#00FF41", fontSize: 8 }}
+                    stroke="rgb(68, 64, 60)"
+                    tick={{ fill: "rgb(68, 64, 60)", fontSize: 12 }}
                   />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: "#1a1a24",
-                      border: "1px solid #00FF41",
-                      fontFamily: '"Press Start 2P"',
-                      fontSize: 8,
+                      backgroundColor: "#f5f0e8",
+                      border: "1px solid rgb(68, 64, 60)",
+                      fontFamily: "serif",
+                      fontSize: 12,
                     }}
                   />
                   <Line
                     type="monotone"
                     dataKey="cumulative"
-                    stroke="#00D9FF"
+                    stroke="rgb(88, 28, 135)"
                     strokeWidth={2}
                     dot={false}
                     name="Cumulative PnL"
@@ -501,15 +501,15 @@ export default function StrategyPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-meta-bg-card border-2 border-meta-green p-4"
+          className="bg-roman-bg-card border-2 border-roman-stone p-4"
         >
-          <h2 className="font-pixel text-sm text-meta-cyan mb-4">
+          <h2 className="font-serif text-sm text-roman-purple mb-4">
             TOP 20 MOST PROFITABLE TRADES
           </h2>
           <div className="overflow-x-auto">
-            <table className="w-full text-[6px]">
+            <table className="w-full text-xs">
               <thead>
-                <tr className="text-meta-green/50 text-left">
+                <tr className="text-roman-text/50 text-left">
                   <th className="p-2">#</th>
                   <th className="p-2">TOKEN</th>
                   <th className="p-2">ENTRY</th>
@@ -524,9 +524,9 @@ export default function StrategyPage() {
                 {strategy.topTrades.map((trade, index) => (
                   <tr
                     key={trade.id}
-                    className="border-t border-meta-green/20"
+                    className="border-t border-roman-stone/20"
                   >
-                    <td className="p-2 text-meta-gold font-bold">
+                    <td className="p-2 text-roman-gold font-bold">
                       {index + 1}
                     </td>
                     <td className="p-2">
@@ -534,21 +534,21 @@ export default function StrategyPage() {
                         href={`https://pump.fun/${trade.tokenAddress}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-meta-green hover:text-meta-cyan hover:underline"
+                        className="text-roman-text hover:text-roman-purple hover:underline"
                       >
                         {trade.tokenSymbol}
                       </a>
                     </td>
-                    <td className="p-2 text-meta-green/70">
+                    <td className="p-2 text-roman-text/70">
                       ${(trade.entryPrice ?? 0).toFixed(8)}
                     </td>
-                    <td className="p-2 text-meta-green/70">
+                    <td className="p-2 text-roman-text/70">
                       {trade.exitPrice ? `$${trade.exitPrice.toFixed(8)}` : "-"}
                     </td>
-                    <td className="p-2 text-meta-green/70">
+                    <td className="p-2 text-roman-text/70">
                       {(trade.amountSol ?? 0).toFixed(4)} SOL
                     </td>
-                    <td className="p-2 text-meta-green/70">
+                    <td className="p-2 text-roman-text/70">
                       {trade.status === "closed"
                         ? `${((trade.amountSol ?? 0) + (trade.pnlSol ?? 0)).toFixed(4)} SOL`
                         : "-"}
@@ -556,14 +556,14 @@ export default function StrategyPage() {
                     <td
                       className="p-2"
                       style={{
-                        color: (trade.pnlSol ?? 0) >= 0 ? "#00FF41" : "#FF0051",
+                        color: (trade.pnlSol ?? 0) >= 0 ? "rgb(4, 120, 87)" : "rgb(153, 27, 27)",
                       }}
                     >
                       {trade.pnlSol != null
                         ? `${trade.pnlSol >= 0 ? "+" : ""}${trade.pnlSol.toFixed(4)}`
                         : "-"}
                     </td>
-                    <td className="p-2 text-meta-green/50">
+                    <td className="p-2 text-roman-text/50">
                       {trade.exitReason?.toUpperCase() || "-"}
                     </td>
                   </tr>
@@ -579,20 +579,20 @@ export default function StrategyPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="bg-meta-bg-card border-2 border-meta-gold/50 p-4"
+          className="bg-roman-bg-card border-2 border-roman-gold/50 p-4"
         >
-          <h2 className="font-pixel text-sm text-meta-gold mb-4">LINEAGE</h2>
+          <h2 className="font-serif text-sm text-roman-gold mb-4">LINEAGE</h2>
           <div className="flex items-center gap-4">
             {strategy.parentIds.map((parentId, i) => (
               <div key={parentId} className="flex items-center gap-2">
                 <a
                   href={`/strategy/${parentId}`}
-                  className="font-pixel text-[8px] text-meta-cyan hover:text-meta-cyan/70"
+                  className="font-serif text-sm text-roman-purple hover:text-roman-purple/70"
                 >
                   PARENT {i + 1}: {parentId.slice(0, 8)}
                 </a>
                 {i < strategy.parentIds.length - 1 && (
-                  <span className="text-meta-green/30">+</span>
+                  <span className="text-roman-text/30">+</span>
                 )}
               </div>
             ))}
@@ -610,19 +610,19 @@ function StatBox({
 }: {
   label: string;
   value: string | number;
-  color: "green" | "cyan" | "gold" | "red";
+  color: "green" | "purple" | "gold" | "red";
 }) {
   const colorClasses = {
-    green: "text-meta-green",
-    cyan: "text-meta-cyan",
-    gold: "text-meta-gold",
-    red: "text-meta-red",
+    green: "text-emerald-700",
+    purple: "text-roman-purple",
+    gold: "text-roman-gold",
+    red: "text-red-800",
   };
 
   return (
-    <div className="bg-meta-bg-light p-3 border border-meta-green/30">
-      <p className="font-pixel text-[6px] text-meta-green/50 mb-1">{label}</p>
-      <p className={`font-pixel text-sm ${colorClasses[color]}`}>{value}</p>
+    <div className="bg-roman-bg-card p-3 border border-roman-stone">
+      <p className="font-serif text-xs text-roman-text/50 mb-1">{label}</p>
+      <p className={`font-serif text-sm ${colorClasses[color]}`}>{value}</p>
     </div>
   );
 }
@@ -636,8 +636,8 @@ function GeneRow({
 }) {
   return (
     <div className="flex justify-between">
-      <span className="text-meta-green/50">{label}</span>
-      <span className="text-meta-green">{value}</span>
+      <span className="text-roman-text/50">{label}</span>
+      <span className="text-roman-text">{value}</span>
     </div>
   );
 }
