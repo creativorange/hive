@@ -171,8 +171,8 @@ export function Stats() {
 
         <StatCard
           label="TOTAL PNL"
-          value={formatSol(treasury?.totalPnl ?? 0)}
-          color={(treasury?.totalPnl ?? 0) >= 0 ? "positive" : "negative"}
+          value={formatSol(treasury?.totalPnL ?? 0)}
+          color={(treasury?.totalPnL ?? 0) >= 0 ? "positive" : "negative"}
         />
 
         <StatCard

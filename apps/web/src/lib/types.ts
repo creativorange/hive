@@ -126,13 +126,14 @@ export interface EvolutionCycle {
 }
 
 export interface Treasury {
-  id: string;
+  id?: string;
   totalSol: number;
   lockedInPositions: number;
   availableToTrade: number;
-  totalPnl: number;
-  reservePercent: number;
-  maxAllocationPerStrategy: number;
+  totalPnL: number;
+  reservePercent?: number;
+  maxAllocationPerStrategy?: number;
+  allocatedPerStrategy?: number;
 }
 
 export interface TradingStats {
