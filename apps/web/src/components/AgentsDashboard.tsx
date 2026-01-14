@@ -292,7 +292,7 @@ function SummaryCard({
   return (
     <div className="roman-tablet p-3 sm:p-4 overflow-hidden">
       <p className="font-sans text-xs sm:text-sm text-roman-stone mb-1">{label}</p>
-      <p className={`font-serif text-base sm:text-2xl font-bold ${valueColor} break-all`}>{value}</p>
+      <p className={`font-serif text-sm sm:text-2xl font-bold ${valueColor} truncate`}>{value}</p>
     </div>
   );
 }
