@@ -277,16 +277,16 @@ export class TradingSimulator {
 
       const currentPerformance = strategy.performance as StrategyPerformance;
 
-      const closedTrades = stats.closedTrades;
+      const closedTrades = stats.closedPositions;
       const avgHoldTimeMs = closedTrades > 0 ? 
         (await this.calculateAvgHoldTime(strategyId)) : 
         currentPerformance.avgHoldTime;
 
       const perfForFitness: StrategyPerformance = {
         winRate: stats.winRate,
-        totalPnL: stats.totalPnl,
+        totalPnL: stats.totalPnL,
         tradesExecuted: stats.totalTrades,
-        sharpeRatio: this.calculateSharpeRatio(stats.totalPnl, stats.avgPnl, stats.closedTrades),
+        sharpeRatio: this.calculateSharpeRatio(stats.totalPnL, stats.avgPnL, stats.closedPositions),
         maxDrawdown: Math.abs(stats.worstTrade),
         avgHoldTime: avgHoldTimeMs,
         fitnessScore: 0,
@@ -296,8 +296,8 @@ export class TradingSimulator {
       const newPerformance: StrategyPerformance = {
         tradesExecuted: stats.totalTrades,
         winRate: stats.winRate,
-        totalPnL: stats.totalPnl,
-        sharpeRatio: this.calculateSharpeRatio(stats.totalPnl, stats.avgPnl, stats.closedTrades),
+        totalPnL: stats.totalPnL,
+        sharpeRatio: this.calculateSharpeRatio(stats.totalPnL, stats.avgPnL, stats.closedPositions),
         maxDrawdown: Math.max(currentPerformance.maxDrawdown, Math.abs(stats.worstTrade)),
         avgHoldTime: avgHoldTimeMs,
         fitnessScore,

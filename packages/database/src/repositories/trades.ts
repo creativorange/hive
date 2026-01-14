@@ -4,16 +4,16 @@ import { trades, type Trade, type NewTrade } from "../schema.js";
 
 export interface TradeStats {
   totalTrades: number;
-  openTrades: number;
-  closedTrades: number;
+  openPositions: number;
+  closedPositions: number;
   winningTrades: number;
   losingTrades: number;
   winRate: number;
-  totalPnl: number;
-  avgPnl: number;
+  totalPnL: number;
+  avgPnL: number;
   bestTrade: number;
   worstTrade: number;
-  totalVolume: number;
+  totalVolumeSol: number;
 }
 
 export class TradesRepository {
@@ -130,16 +130,16 @@ export class TradesRepository {
 
     return {
       totalTrades: allTrades.length,
-      openTrades: openTrades.length,
-      closedTrades: closedTrades.length,
+      openPositions: openTrades.length,
+      closedPositions: closedTrades.length,
       winningTrades: winningTrades.length,
       losingTrades: losingTrades.length,
       winRate: closedTrades.length > 0 ? winningTrades.length / closedTrades.length : 0,
-      totalPnl,
-      avgPnl,
+      totalPnL: totalPnl,
+      avgPnL: avgPnl,
       bestTrade,
       worstTrade,
-      totalVolume,
+      totalVolumeSol: totalVolume,
     };
   }
 
@@ -160,16 +160,16 @@ export class TradesRepository {
 
     return {
       totalTrades: strategyTrades.length,
-      openTrades: openTrades.length,
-      closedTrades: closedTrades.length,
+      openPositions: openTrades.length,
+      closedPositions: closedTrades.length,
       winningTrades: winningTrades.length,
       losingTrades: losingTrades.length,
       winRate: closedTrades.length > 0 ? winningTrades.length / closedTrades.length : 0,
-      totalPnl,
-      avgPnl,
+      totalPnL: totalPnl,
+      avgPnL: avgPnl,
       bestTrade,
       worstTrade,
-      totalVolume,
+      totalVolumeSol: totalVolume,
     };
   }
 
