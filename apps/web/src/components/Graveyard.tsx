@@ -51,7 +51,7 @@ export function Graveyard() {
   if (loading) {
     return (
       <div className="bg-roman-bg border-2 border-roman-crimson p-4">
-        <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
           {[...Array(16)].map((_, i) => (
             <div
               key={i}
@@ -123,7 +123,7 @@ export function Graveyard() {
             NO FALLEN LEGIONS
           </p>
         ) : (
-          <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
             {filteredStrategies.map((strategy, index) => (
               <Gravestone key={strategy.id} strategy={strategy} index={index} />
             ))}

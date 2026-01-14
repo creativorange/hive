@@ -35,38 +35,42 @@ export default function RootLayout({
                   Trading Imperium
                 </span>
               </div>
-              <nav className="flex items-center gap-2 md:gap-4">
+              <nav className="flex items-center gap-1 sm:gap-2 md:gap-4 flex-wrap justify-end">
                 <a
                   href="/"
-                  className="font-serif text-base md:text-lg text-roman-text hover:text-roman-crimson transition-colors tracking-wider uppercase px-4 py-3 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                  className="font-serif text-xs sm:text-base md:text-lg text-roman-text hover:text-roman-crimson transition-colors tracking-wider uppercase px-2 sm:px-4 py-2 sm:py-3 min-h-[44px] min-w-[44px] flex items-center justify-center"
                 >
-                  Colosseum
+                  <span className="sm:hidden">🏟️</span>
+                  <span className="hidden sm:inline">Colosseum</span>
                 </a>
                 <div className="column-divider hidden md:block" />
                 <a
                   href="/agents"
-                  className="font-serif text-base md:text-lg text-roman-text hover:text-roman-crimson transition-colors tracking-wider uppercase px-4 py-3 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                  className="font-serif text-xs sm:text-base md:text-lg text-roman-text hover:text-roman-crimson transition-colors tracking-wider uppercase px-2 sm:px-4 py-2 sm:py-3 min-h-[44px] min-w-[44px] flex items-center justify-center"
                 >
-                  Legions
+                  <span className="sm:hidden">⚔️</span>
+                  <span className="hidden sm:inline">Legions</span>
                 </a>
                 <div className="column-divider hidden md:block" />
                 <a
                   href="/graveyard"
-                  className="font-serif text-base md:text-lg text-roman-text hover:text-roman-crimson transition-colors tracking-wider uppercase px-4 py-3 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                  className="font-serif text-xs sm:text-base md:text-lg text-roman-text hover:text-roman-crimson transition-colors tracking-wider uppercase px-2 sm:px-4 py-2 sm:py-3 min-h-[44px] min-w-[44px] flex items-center justify-center"
                 >
-                  Catacombs
+                  <span className="sm:hidden">💀</span>
+                  <span className="hidden sm:inline">Catacombs</span>
                 </a>
                 <div className="column-divider hidden md:block" />
                 <a
                   href="/lab"
-                  className="font-serif text-base md:text-lg text-roman-text hover:text-roman-crimson transition-colors tracking-wider uppercase px-4 py-3 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                  className="font-serif text-xs sm:text-base md:text-lg text-roman-text hover:text-roman-crimson transition-colors tracking-wider uppercase px-2 sm:px-4 py-2 sm:py-3 min-h-[44px] min-w-[44px] flex items-center justify-center"
                 >
-                  Senate
+                  <span className="sm:hidden">🏛️</span>
+                  <span className="hidden sm:inline">Senate</span>
                 </a>
-                <div className="h-8 w-px bg-roman-stone/50 mx-2" />
-                <div className="flex items-center gap-2 px-3 py-2 bg-roman-bg-light rounded-sm border border-roman-purple">
-                  <div className="h-3 w-3 rounded-full bg-roman-purple animate-pulse" />
-                  <span className="font-sans text-sm text-roman-purple uppercase tracking-wider font-medium">Paper</span>
+                <div className="h-8 w-px bg-roman-stone/50 mx-1 sm:mx-2 hidden sm:block" />
+                <div className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-2 bg-roman-bg-light rounded-sm border border-roman-purple">
+                  <div className="h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-roman-purple animate-pulse" />
+                  <span className="font-sans text-xs sm:text-sm text-roman-purple uppercase tracking-wider font-medium">Paper</span>
                 </div>
               </nav>
             </div>

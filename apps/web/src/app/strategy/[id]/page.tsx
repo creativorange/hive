@@ -195,7 +195,7 @@ export default function StrategyPage() {
           animate={{ opacity: 1, scale: 1 }}
           className="bg-roman-bg-card border-2 border-roman-gold p-6"
         >
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <h2 className="font-serif text-lg text-roman-gold mb-2">⚠️ AGENT NEEDS FUNDING</h2>
               <p className="font-serif text-sm text-roman-text/70">
@@ -217,7 +217,7 @@ export default function StrategyPage() {
               <button
                 onClick={handleFund}
                 disabled={funding || fundAmount <= 0}
-                className={`font-serif text-sm px-4 py-2 border-2 transition-all ${
+                className={`font-serif text-sm px-4 py-2 border-2 transition-all whitespace-nowrap ${
                   funding
                     ? "border-roman-gold/50 text-roman-gold/50 cursor-wait"
                     : "border-roman-gold text-roman-gold hover:bg-roman-gold hover:text-roman-bg-card"
@@ -310,8 +310,60 @@ export default function StrategyPage() {
           <h2 className="font-serif text-sm text-roman-purple mb-4">
             OPEN POSITIONS ({strategy.positions.length})
           </h2>
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs">
+          {/* Mobile card layout */}
+          <div className="md:hidden space-y-3">
+            {strategy.positions.map((position) => {
+              const holdTimeMs = Date.now() - position.openedAt;
+              const holdMins = Math.floor(holdTimeMs / 60000);
+              const pnlPositionColor = position.unrealizedPnL >= 0 ? "rgb(4, 120, 87)" : "rgb(153, 27, 27)";
+              const tokenSymbol = position.tokenSymbol ?? position.token?.symbol ?? "???";
+              const tokenAddress = position.tokenAddress ?? position.token?.address ?? "";
+              
+              return (
+                <div key={position.id} className="p-3 border border-roman-purple/20 rounded">
+                  <div className="flex items-start justify-between mb-2">
+                    <a
+                      href={`https://pump.fun/${tokenAddress}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-roman-purple hover:text-roman-text hover:underline font-medium"
+                    >
+                      {tokenSymbol}
+                    </a>
+                    <div className="text-right">
+                      <span style={{ color: pnlPositionColor }} className="font-medium">
+                        {position.unrealizedPnL >= 0 ? "+" : ""}{position.unrealizedPnL.toFixed(4)} SOL
+                      </span>
+                      <span className="text-xs ml-1" style={{ color: pnlPositionColor }}>
+                        ({position.unrealizedPnLPercent >= 0 ? "+" : ""}{(position.unrealizedPnLPercent * 100).toFixed(1)}%)
+                      </span>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div>
+                      <span className="text-roman-text/50">Entry: </span>
+                      <span className="text-roman-text">${position.entryPrice.toFixed(6)}</span>
+                    </div>
+                    <div>
+                      <span className="text-roman-text/50">Current: </span>
+                      <span className="text-roman-text">${position.currentPrice.toFixed(6)}</span>
+                    </div>
+                    <div>
+                      <span className="text-roman-text/50">Invested: </span>
+                      <span className="text-roman-text">{position.amountSol.toFixed(4)} SOL</span>
+                    </div>
+                    <div>
+                      <span className="text-roman-text/50">Hold: </span>
+                      <span className="text-roman-text">{holdMins}min</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          {/* Desktop table layout */}
+          <div className="hidden md:block overflow-x-auto">
+            <table className="w-full text-xs min-w-[500px]">
               <thead>
                 <tr className="text-roman-text/50 text-left">
                   <th className="p-2">TOKEN</th>
@@ -506,8 +558,57 @@ export default function StrategyPage() {
           <h2 className="font-serif text-sm text-roman-purple mb-4">
             TOP 20 MOST PROFITABLE TRADES
           </h2>
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs">
+          {/* Mobile card layout */}
+          <div className="md:hidden space-y-3">
+            {strategy.topTrades.map((trade, index) => (
+              <div key={trade.id} className="p-3 border border-roman-stone/20 rounded">
+                <div className="flex items-start justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-roman-gold font-bold">#{index + 1}</span>
+                    <a
+                      href={`https://pump.fun/${trade.tokenAddress}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-roman-text hover:text-roman-purple hover:underline font-medium"
+                    >
+                      {trade.tokenSymbol}
+                    </a>
+                  </div>
+                  <span
+                    className="font-medium"
+                    style={{
+                      color: (trade.pnlSol ?? 0) >= 0 ? "rgb(4, 120, 87)" : "rgb(153, 27, 27)",
+                    }}
+                  >
+                    {trade.pnlSol != null
+                      ? `${trade.pnlSol >= 0 ? "+" : ""}${trade.pnlSol.toFixed(4)} SOL`
+                      : "-"}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <span className="text-roman-text/50">Entry: </span>
+                    <span className="text-roman-text">${(trade.entryPrice ?? 0).toFixed(6)}</span>
+                  </div>
+                  <div>
+                    <span className="text-roman-text/50">Exit: </span>
+                    <span className="text-roman-text">{trade.exitPrice ? `$${trade.exitPrice.toFixed(6)}` : "-"}</span>
+                  </div>
+                  <div>
+                    <span className="text-roman-text/50">Bought: </span>
+                    <span className="text-roman-text">{(trade.amountSol ?? 0).toFixed(4)} SOL</span>
+                  </div>
+                  <div>
+                    <span className="text-roman-text/50">Reason: </span>
+                    <span className="text-roman-text">{trade.exitReason?.toUpperCase() || "-"}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          {/* Desktop table layout */}
+          <div className="hidden md:block overflow-x-auto">
+            <table className="w-full text-xs min-w-[600px]">
               <thead>
                 <tr className="text-roman-text/50 text-left">
                   <th className="p-2">#</th>

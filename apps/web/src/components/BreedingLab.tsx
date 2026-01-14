@@ -138,7 +138,7 @@ function IdleState({
         )}
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="border border-roman-stone/30 p-3">
           <p className="font-serif text-xl text-roman-text mb-2">
             PATRICIANS (TOP 20%)

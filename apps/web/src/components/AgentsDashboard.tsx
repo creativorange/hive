@@ -247,7 +247,8 @@ export function AgentsDashboard() {
       </div>
 
       <div className="roman-tablet overflow-hidden">
-        <div className="grid grid-cols-12 gap-2 p-4 border-b-2 border-roman-stone/30 font-sans text-sm text-roman-stone font-medium">
+        {/* Desktop table header - hidden on mobile */}
+        <div className="hidden md:grid grid-cols-12 gap-2 p-4 border-b-2 border-roman-stone/30 font-sans text-sm text-roman-stone font-medium">
           <div className="col-span-3">LEGION</div>
           <div className="col-span-1 text-center">TYPE</div>
           <div className="col-span-2 text-right">PNL</div>
@@ -329,9 +330,59 @@ function AgentRow({
 
   return (
     <motion.div layout className="border-b border-roman-stone/20">
+      {/* Mobile card layout */}
       <div
         onClick={onToggle}
-        className="grid grid-cols-12 gap-2 p-4 hover:bg-roman-bg-light/50 transition-colors cursor-pointer min-h-[56px] items-center"
+        className="md:hidden p-4 hover:bg-roman-bg-light/50 transition-colors cursor-pointer"
+      >
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <span
+              className={`font-sans text-sm transform transition-transform ${
+                isExpanded ? "rotate-90" : ""
+              }`}
+            >
+              ▶
+            </span>
+            <Link
+              href={`/strategy/${agent.id}`}
+              onClick={(e) => e.stopPropagation()}
+              className="font-serif text-base text-roman-text hover:text-roman-stone"
+            >
+              {agent.name || `AGENT-${agent.id.slice(0, 8)}`}
+            </Link>
+            {agent.status !== "active" && (
+              <span className="font-sans text-xs px-2 py-1 bg-red-100 text-red-800 rounded">
+                {agent.status.toUpperCase()}
+              </span>
+            )}
+          </div>
+          <div className={`font-sans text-base font-medium ${pnlPositive ? "text-emerald-700" : "text-red-800"}`}>
+            {pnlPositive ? "+" : ""}{realizedPnL.toFixed(4)} SOL
+          </div>
+        </div>
+        <div className="grid grid-cols-3 gap-2 text-sm">
+          <div>
+            <span className="text-roman-stone">Win: </span>
+            <span className="text-roman-text">{(agent.performance.winRate * 100).toFixed(0)}%</span>
+          </div>
+          <div>
+            <span className="text-roman-stone">Trades: </span>
+            <span className="text-roman-text">{totalTradesCount}</span>
+          </div>
+          <div>
+            <span className="text-roman-stone">Open: </span>
+            <span className={openTradesCount > 0 ? "text-amber-700 font-medium" : "text-roman-stone"}>
+              {openTradesCount}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop table row */}
+      <div
+        onClick={onToggle}
+        className="hidden md:grid grid-cols-12 gap-2 p-4 hover:bg-roman-bg-light/50 transition-colors cursor-pointer min-h-[56px] items-center"
       >
         <div className="col-span-3 flex items-center gap-3">
           <span
@@ -452,44 +503,90 @@ function PositionRow({ position }: { position: Position }) {
   const tokenName = position.token?.name ?? position.tokenName ?? position.trade?.tokenName ?? "";
 
   return (
-    <div className="grid grid-cols-6 gap-3 p-3 bg-roman-bg-card border border-roman-stone/30 rounded">
-      <div className="col-span-2">
-        {tokenAddress ? (
-          <a
-            href={`https://pump.fun/${tokenAddress}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-serif text-base text-roman-text hover:text-roman-stone font-medium"
-          >
-            {tokenSymbol}
-          </a>
-        ) : (
-          <span className="font-serif text-base text-roman-text font-medium">{tokenSymbol}</span>
-        )}
-        <p className="font-sans text-sm text-roman-stone">{tokenName}</p>
+    <div className="p-3 bg-roman-bg-card border border-roman-stone/30 rounded">
+      {/* Mobile layout */}
+      <div className="md:hidden space-y-2">
+        <div className="flex items-start justify-between">
+          <div>
+            {tokenAddress ? (
+              <a
+                href={`https://pump.fun/${tokenAddress}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-serif text-base text-roman-text hover:text-roman-stone font-medium"
+              >
+                {tokenSymbol}
+              </a>
+            ) : (
+              <span className="font-serif text-base text-roman-text font-medium">{tokenSymbol}</span>
+            )}
+            <p className="font-sans text-sm text-roman-stone">{tokenName}</p>
+          </div>
+          <div className="text-right">
+            <p className={`font-sans text-base font-medium ${pnlPositive ? "text-emerald-700" : "text-red-800"}`}>
+              {pnlPositive ? "+" : ""}{position.unrealizedPnL.toFixed(4)} SOL
+            </p>
+            <p className={`font-sans text-xs ${pnlPositive ? "text-emerald-700" : "text-red-800"}`}>
+              ({position.unrealizedPnLPercent >= 0 ? "+" : ""}{(position.unrealizedPnLPercent * 100).toFixed(1)}%)
+            </p>
+          </div>
+        </div>
+        <div className="grid grid-cols-3 gap-2 text-xs">
+          <div>
+            <span className="text-roman-stone">Entry: </span>
+            <span className="text-roman-text">${position.entryPrice.toFixed(6)}</span>
+          </div>
+          <div>
+            <span className="text-roman-stone">Now: </span>
+            <span className="text-roman-text">${position.currentPrice.toFixed(6)}</span>
+          </div>
+          <div>
+            <span className="text-roman-stone">Size: </span>
+            <span className="text-roman-text">{position.amountSol.toFixed(4)}</span>
+          </div>
+        </div>
       </div>
-      <div className="text-right">
-        <p className="font-sans text-xs text-roman-stone">ENTRY</p>
-        <p className="font-sans text-sm text-roman-text">${position.entryPrice.toFixed(8)}</p>
-      </div>
-      <div className="text-right">
-        <p className="font-sans text-xs text-roman-stone">CURRENT</p>
-        <p className="font-sans text-sm text-roman-text">${position.currentPrice.toFixed(8)}</p>
-      </div>
-      <div className="text-right">
-        <p className="font-sans text-xs text-roman-stone">SIZE</p>
-        <p className="font-sans text-sm text-roman-text">{position.amountSol.toFixed(4)} SOL</p>
-      </div>
-      <div className="text-right">
-        <p className="font-sans text-xs text-roman-stone">UNREALIZED</p>
-        <p className={`font-sans text-base font-medium ${pnlPositive ? "text-emerald-700" : "text-red-800"}`}>
-          {pnlPositive ? "+" : ""}
-          {position.unrealizedPnL.toFixed(4)} SOL
-          <span className="text-sm ml-1">
-            ({position.unrealizedPnLPercent >= 0 ? "+" : ""}
-            {(position.unrealizedPnLPercent * 100).toFixed(1)}%)
-          </span>
-        </p>
+
+      {/* Desktop layout */}
+      <div className="hidden md:grid grid-cols-6 gap-3">
+        <div className="col-span-2">
+          {tokenAddress ? (
+            <a
+              href={`https://pump.fun/${tokenAddress}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-serif text-base text-roman-text hover:text-roman-stone font-medium"
+            >
+              {tokenSymbol}
+            </a>
+          ) : (
+            <span className="font-serif text-base text-roman-text font-medium">{tokenSymbol}</span>
+          )}
+          <p className="font-sans text-sm text-roman-stone">{tokenName}</p>
+        </div>
+        <div className="text-right">
+          <p className="font-sans text-xs text-roman-stone">ENTRY</p>
+          <p className="font-sans text-sm text-roman-text">${position.entryPrice.toFixed(8)}</p>
+        </div>
+        <div className="text-right">
+          <p className="font-sans text-xs text-roman-stone">CURRENT</p>
+          <p className="font-sans text-sm text-roman-text">${position.currentPrice.toFixed(8)}</p>
+        </div>
+        <div className="text-right">
+          <p className="font-sans text-xs text-roman-stone">SIZE</p>
+          <p className="font-sans text-sm text-roman-text">{position.amountSol.toFixed(4)} SOL</p>
+        </div>
+        <div className="text-right">
+          <p className="font-sans text-xs text-roman-stone">UNREALIZED</p>
+          <p className={`font-sans text-base font-medium ${pnlPositive ? "text-emerald-700" : "text-red-800"}`}>
+            {pnlPositive ? "+" : ""}
+            {position.unrealizedPnL.toFixed(4)} SOL
+            <span className="text-sm ml-1">
+              ({position.unrealizedPnLPercent >= 0 ? "+" : ""}
+              {(position.unrealizedPnLPercent * 100).toFixed(1)}%)
+            </span>
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -501,31 +598,76 @@ function TradeRow({ trade }: { trade: Trade }) {
   const pnlPositive = pnl >= 0;
 
   return (
-    <div className="grid grid-cols-8 gap-2 p-3 bg-roman-bg-card border border-roman-stone/20 rounded text-sm">
-      <div className="col-span-2 flex items-center gap-2">
-        <span className={`font-sans font-medium ${isOpen ? "text-amber-700" : pnlPositive ? "text-emerald-700" : "text-red-800"}`}>
-          {isOpen ? "OPEN" : "CLOSED"}
-        </span>
-        <a
-          href={`https://pump.fun/${trade.tokenAddress}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="font-sans text-roman-text hover:text-roman-stone truncate"
-        >
-          {trade.tokenSymbol}
-        </a>
+    <div className="p-3 bg-roman-bg-card border border-roman-stone/20 rounded text-sm">
+      {/* Mobile layout */}
+      <div className="md:hidden space-y-2">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-2">
+            <span className={`font-sans font-medium ${isOpen ? "text-amber-700" : pnlPositive ? "text-emerald-700" : "text-red-800"}`}>
+              {isOpen ? "OPEN" : "CLOSED"}
+            </span>
+            <a
+              href={`https://pump.fun/${trade.tokenAddress}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-sans text-roman-text hover:text-roman-stone"
+            >
+              {trade.tokenSymbol}
+            </a>
+          </div>
+          <div className={`font-medium ${isOpen ? "text-roman-stone" : pnlPositive ? "text-emerald-700" : "text-red-800"}`}>
+            {isOpen ? "-" : `${pnlPositive ? "+" : ""}${pnl.toFixed(4)} SOL`}
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-2 text-xs">
+          <div>
+            <span className="text-roman-stone">Entry: </span>
+            <span className="text-roman-text">${(trade.entryPrice ?? 0).toFixed(6)}</span>
+          </div>
+          <div>
+            <span className="text-roman-stone">Size: </span>
+            <span className="text-roman-text">{(trade.amountSol ?? 0).toFixed(4)} SOL</span>
+          </div>
+          <div>
+            <span className="text-roman-stone">Time: </span>
+            <span className="text-roman-text">{new Date(trade.entryTimestamp).toLocaleTimeString()}</span>
+          </div>
+          {trade.exitReason && (
+            <div>
+              <span className="text-roman-stone">Reason: </span>
+              <span className="text-roman-text">{trade.exitReason.toUpperCase()}</span>
+            </div>
+          )}
+        </div>
       </div>
-      <div className="text-right text-roman-stone">${(trade.entryPrice ?? 0).toFixed(8)}</div>
-      <div className="text-right text-roman-stone">
-        {trade.exitPrice ? `$${trade.exitPrice.toFixed(8)}` : "-"}
-      </div>
-      <div className="text-right text-roman-text">{(trade.amountSol ?? 0).toFixed(4)} SOL</div>
-      <div className={`text-right font-medium ${isOpen ? "text-roman-stone" : pnlPositive ? "text-emerald-700" : "text-red-800"}`}>
-        {isOpen ? "-" : `${pnlPositive ? "+" : ""}${pnl.toFixed(4)}`}
-      </div>
-      <div className="text-right text-roman-stone">{trade.exitReason?.toUpperCase() || "-"}</div>
-      <div className="text-right text-roman-stone">
-        {new Date(trade.entryTimestamp).toLocaleTimeString()}
+
+      {/* Desktop layout */}
+      <div className="hidden md:grid grid-cols-8 gap-2">
+        <div className="col-span-2 flex items-center gap-2">
+          <span className={`font-sans font-medium ${isOpen ? "text-amber-700" : pnlPositive ? "text-emerald-700" : "text-red-800"}`}>
+            {isOpen ? "OPEN" : "CLOSED"}
+          </span>
+          <a
+            href={`https://pump.fun/${trade.tokenAddress}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-sans text-roman-text hover:text-roman-stone truncate"
+          >
+            {trade.tokenSymbol}
+          </a>
+        </div>
+        <div className="text-right text-roman-stone">${(trade.entryPrice ?? 0).toFixed(8)}</div>
+        <div className="text-right text-roman-stone">
+          {trade.exitPrice ? `$${trade.exitPrice.toFixed(8)}` : "-"}
+        </div>
+        <div className="text-right text-roman-text">{(trade.amountSol ?? 0).toFixed(4)} SOL</div>
+        <div className={`text-right font-medium ${isOpen ? "text-roman-stone" : pnlPositive ? "text-emerald-700" : "text-red-800"}`}>
+          {isOpen ? "-" : `${pnlPositive ? "+" : ""}${pnl.toFixed(4)}`}
+        </div>
+        <div className="text-right text-roman-stone">{trade.exitReason?.toUpperCase() || "-"}</div>
+        <div className="text-right text-roman-stone">
+          {new Date(trade.entryTimestamp).toLocaleTimeString()}
+        </div>
       </div>
     </div>
   );

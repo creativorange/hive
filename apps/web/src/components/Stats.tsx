@@ -33,16 +33,16 @@ function StatCard({ label, value, subValue, color = "neutral", animate = true }:
     <motion.div
       initial={animate ? { opacity: 0, y: 20 } : false}
       animate={{ opacity: 1, y: 0 }}
-      className={`roman-tablet p-4 min-h-[100px] border-2 ${borderColors[color]}`}
+      className={`roman-tablet p-3 sm:p-4 min-h-[90px] sm:min-h-[100px] border-2 ${borderColors[color]}`}
     >
-      <p className="font-serif text-sm text-roman-stone mb-2 tracking-wider uppercase">{label}</p>
+      <p className="font-serif text-xs sm:text-sm text-roman-stone mb-1 sm:mb-2 tracking-wider uppercase">{label}</p>
       
-      <p className={`font-serif text-2xl md:text-3xl ${valueColors[color]} font-bold`}>
+      <p className={`font-serif text-lg sm:text-2xl md:text-3xl ${valueColors[color]} font-bold break-all`}>
         {value}
       </p>
       
       {subValue && (
-        <p className="font-sans text-sm text-roman-stone mt-2">{subValue}</p>
+        <p className="font-sans text-xs sm:text-sm text-roman-stone mt-1 sm:mt-2">{subValue}</p>
       )}
     </motion.div>
   );

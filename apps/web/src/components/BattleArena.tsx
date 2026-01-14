@@ -490,14 +490,18 @@ export function BattleArena() {
 
   return (
     <div className="space-y-4">
-      <div className="roman-tablet p-2 sm:p-4 overflow-x-auto">
+      <div className="roman-tablet p-2 sm:p-4">
         <canvas
           ref={canvasRef}
           width={ARENA_WIDTH}
           height={ARENA_HEIGHT}
           onClick={handleCanvasClick}
-          className="cursor-pointer mx-auto block w-full max-w-[800px] rounded"
-          style={{ aspectRatio: `${ARENA_WIDTH}/${ARENA_HEIGHT}` }}
+          className="cursor-pointer mx-auto block w-full rounded"
+          style={{ 
+            aspectRatio: `${ARENA_WIDTH}/${ARENA_HEIGHT}`,
+            minHeight: '300px',
+            maxHeight: '70vh',
+          }}
         />
       </div>
     </div>
