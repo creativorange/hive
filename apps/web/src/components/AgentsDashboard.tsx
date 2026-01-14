@@ -290,9 +290,9 @@ function SummaryCard({
   const valueColor = positive === undefined ? "text-roman-text" : positive ? "text-emerald-700" : "text-red-800";
 
   return (
-    <div className="roman-tablet p-4">
-      <p className="font-sans text-sm text-roman-stone mb-1">{label}</p>
-      <p className={`font-serif text-2xl font-bold ${valueColor}`}>{value}</p>
+    <div className="roman-tablet p-3 sm:p-4 overflow-hidden">
+      <p className="font-sans text-xs sm:text-sm text-roman-stone mb-1">{label}</p>
+      <p className={`font-serif text-base sm:text-2xl font-bold ${valueColor} break-all`}>{value}</p>
     </div>
   );
 }

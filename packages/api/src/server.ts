@@ -75,9 +75,9 @@ export async function createServer(): Promise<FastifyInstance> {
     treasuryRepo,
     wsHandler,
     {
-      initialTreasurySol: 100,
+      initialTreasurySol: 300,
       maxAllocationPerStrategy: 3, // Each agent gets max 3 SOL wallet
-      reservePercent: 0.1,
+      reservePercent: 0.05,
       autoStart: true,
     }
   );

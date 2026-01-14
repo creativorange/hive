@@ -240,29 +240,6 @@ export default function StrategyPage() {
         >
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-serif text-sm text-roman-gold">AGENT WALLET</h2>
-            {strategy.status === "active" && (
-              <div className="flex items-center gap-2">
-                <input
-                  type="number"
-                  min="0.1"
-                  step="0.1"
-                  value={fundAmount}
-                  onChange={(e) => setFundAmount(parseFloat(e.target.value) || 0)}
-                  className="w-16 bg-roman-bg-card border border-roman-stone text-roman-text font-serif text-sm px-2 py-1 text-center"
-                />
-                <button
-                  onClick={handleFund}
-                  disabled={funding || fundAmount <= 0}
-                  className={`font-serif text-sm px-3 py-1 border transition-all ${
-                    funding
-                      ? "border-roman-stone text-roman-text/30 cursor-wait"
-                      : "border-roman-stone text-roman-text/70 hover:border-roman-text hover:text-roman-text"
-                  }`}
-                >
-                  {funding ? "..." : "+ ADD"}
-                </button>
-              </div>
-            )}
           </div>
           <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
             <StatBox

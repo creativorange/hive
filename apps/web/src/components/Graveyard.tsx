@@ -190,7 +190,7 @@ function Gravestone({ strategy, index }: GravestoneProps) {
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-roman-bg-card border border-roman-crimson p-3 z-20 min-w-44 shadow-lg"
+          className="absolute bottom-full mb-2 bg-roman-bg-card border border-roman-crimson p-3 z-20 min-w-44 shadow-lg left-0 sm:left-1/2 sm:-translate-x-1/2"
         >
           <p className="font-serif text-sm text-roman-crimson mb-2">
             {strategy.name || `STRATEGY-${strategy.id.slice(0, 8)}`}

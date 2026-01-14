@@ -104,7 +104,7 @@ export class TreasuryRepository {
     });
   }
 
-  async reset(initialSol: number = 10): Promise<Treasury> {
+  async reset(initialSol: number = 300): Promise<Treasury> {
     await this.db.delete(treasury);
     return this.initialize({
       totalSol: initialSol,

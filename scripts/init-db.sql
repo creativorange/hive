@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS treasury (
 
 -- Insert initial treasury record
 INSERT INTO treasury (total_sol, available_to_trade)
-VALUES (10, 9)
+VALUES (300, 300)
 ON CONFLICT DO NOTHING;
 
 -- Function to update updated_at timestamp
