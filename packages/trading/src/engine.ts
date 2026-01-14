@@ -26,7 +26,7 @@ const DEFAULT_TRADING_CONFIG: TradingConfig = {
 };
 
 const DEFAULT_TREASURY_CONFIG: TreasuryConfig = {
-  initialSol: 10,
+  initialSol: 300,
   maxAllocationPerStrategy: 3, // Each agent gets max 3 SOL wallet
   reservePercent: 0.05, // Reduced reserve to put more capital to work
 };

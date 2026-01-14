@@ -61,7 +61,7 @@ export async function createServer(): Promise<FastifyInstance> {
 
   const tradingEngine = new TradingEngine(
     { paperTradingMode: true },
-    { initialSol: 10 }
+    { initialSol: 300 }
   );
 
   const geneticEngine = new GeneticEngine();

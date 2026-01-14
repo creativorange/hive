@@ -11,9 +11,9 @@ interface SimulatorConfig {
 }
 
 const DEFAULT_CONFIG: SimulatorConfig = {
-  initialTreasurySol: 100,
-  maxAllocationPerStrategy: 2,
-  reservePercent: 0.1,
+  initialTreasurySol: 300,
+  maxAllocationPerStrategy: 3,
+  reservePercent: 0.05,
   autoStart: true,
 };
 
